@@ -1,0 +1,171 @@
+.card {
+  padding: 24px;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.labelInput {
+  flex: 1;
+  border: none;
+  border-bottom: 1px solid #dadce0;
+  font-size: 16px;
+  padding: 8px 0;
+  margin-right: 16px;
+  background-color: #f8f9fa;
+  padding-left: 12px;
+  border-radius: 4px 4px 0 0;
+}
+
+.labelInput:focus {
+  outline: none;
+  border-bottom: 2px solid var(--color-primary);
+}
+
+.typeTag {
+  background-color: #f1f3f4;
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  font-weight: 500;
+  padding: 4px 12px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.content {
+  margin-bottom: 24px;
+}
+
+.configGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.inputGroupFull {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.inputGroup label, .inputGroupFull label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+.inputGroup input, .inputGroup select, .inputGroupFull textarea {
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  padding: 8px;
+  font-size: 14px;
+}
+
+.checkboxList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 150px;
+  overflow-y: auto;
+  border: 1px solid var(--color-border);
+  padding: 8px;
+  border-radius: 4px;
+}
+
+.checkboxItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.dependenciesSection {
+  border-top: 1px solid var(--color-border);
+  padding-top: 16px;
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.sectionHeader h4 {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.addButton {
+  background: none;
+  border: 1px solid var(--color-primary);
+  color: var(--color-primary);
+  font-size: 12px;
+  font-weight: 500;
+  padding: 4px 12px;
+  border-radius: 4px;
+}
+
+.dependencyRow {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.dependencyRow select, .dependencyRow input {
+  font-size: 13px;
+  padding: 4px 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+}
+
+.deleteButtonSmall {
+  background: none;
+  border: none;
+  color: var(--color-text-secondary);
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--color-border);
+}
+
+.requiredToggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+
+.deleteButton {
+  background: none;
+  border: none;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.deleteButton:hover {
+  color: var(--color-error);
+}

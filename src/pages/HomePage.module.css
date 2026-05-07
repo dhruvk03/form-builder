@@ -1,0 +1,124 @@
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.title {
+  color: var(--color-primary);
+  font-size: 32px;
+  font-weight: 500;
+}
+
+.createButton {
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.2s;
+}
+
+.createButton:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.emptyState {
+  text-align: center;
+  padding: 48px;
+  color: var(--color-text-secondary);
+}
+
+.templateCard {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.templateTitle {
+  font-size: 18px;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.fieldCount {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.actionLink, .primaryActionLink {
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 4px;
+}
+
+.actionLink {
+  color: var(--color-primary);
+  border: 1px solid var(--color-border);
+}
+
+.primaryActionLink {
+  background-color: var(--color-primary-light);
+  color: var(--color-primary);
+}
+
+.responsesSection {
+  margin-top: 8px;
+}
+
+.responsesTitle {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  margin-bottom: 12px;
+}
+
+.noResponses {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  font-style: italic;
+}
+
+.responseList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.responseItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  padding: 8px 0;
+  border-bottom: 1px solid #f1f3f4;
+}
+
+.responseItem:last-child {
+  border-bottom: none;
+}
+
+.viewLink {
+  color: var(--color-primary);
+  text-decoration: none;
+  font-weight: 500;
+}
