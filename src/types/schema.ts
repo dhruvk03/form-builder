@@ -35,6 +35,7 @@ export interface BaseField {
   id: string;
   type: FieldType;
   label: string;
+  description?: string;
   required?: boolean;
   dependencies?: Dependency[];
 }
@@ -120,6 +121,7 @@ export type FormField =
 export interface FormTemplate {
   id: string;
   title: string;
+  description?: string;
   fields: FormField[];
 }
 

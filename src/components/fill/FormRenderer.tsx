@@ -21,6 +21,7 @@ const TextInput: React.FC<FieldRendererProps> = ({ field, value, onChange, error
       <label className={styles.label}>
         {field.label} {required && <span className={styles.required}>*</span>}
       </label>
+      {field.description && <p className={styles.description}>{field.description}</p>}
       <InputComponent
         className={styles.input}
         value={value || ''}
@@ -42,6 +43,7 @@ const NumberInput: React.FC<FieldRendererProps> = ({ field, value, onChange, err
       <label className={styles.label}>
         {field.label} {required && <span className={styles.required}>*</span>}
       </label>
+      {field.description && <p className={styles.description}>{field.description}</p>}
       <input
         type="number"
         className={styles.input}
@@ -63,6 +65,7 @@ const SelectInput: React.FC<FieldRendererProps> = ({ field, value, onChange, err
         <label className={styles.label}>
           {field.label} {required && <span className={styles.required}>*</span>}
         </label>
+        {field.description && <p className={styles.description}>{field.description}</p>}
         <select
           className={styles.select}
           value={value || ''}
@@ -82,6 +85,7 @@ const SelectInput: React.FC<FieldRendererProps> = ({ field, value, onChange, err
       <label className={styles.label}>
         {field.label} {required && <span className={styles.required}>*</span>}
       </label>
+      {field.description && <p className={styles.description}>{field.description}</p>}
       <div className={styles.optionList}>
         {field.options.map(opt => (
           <label key={opt} className={styles.optionItem}>
@@ -119,6 +123,7 @@ const DateInput: React.FC<FieldRendererProps> = ({ field, value, onChange, error
       <label className={styles.label}>
         {field.label} {required && <span className={styles.required}>*</span>}
       </label>
+      {field.description && <p className={styles.description}>{field.description}</p>}
       <input
         type="date"
         className={styles.input}
@@ -139,6 +144,7 @@ const FileUpload: React.FC<FieldRendererProps> = ({ field, value, onChange, erro
       <label className={styles.label}>
         {field.label} {required && <span className={styles.required}>*</span>}
       </label>
+      {field.description && <p className={styles.description}>{field.description}</p>}
       {readOnly ? (
         <div className={styles.fileList}>
           {(value || []).map((f: any, i: number) => (
@@ -179,6 +185,7 @@ const CalculationDisplay: React.FC<FieldRendererProps> = ({ field, value }) => {
   return (
     <div className={styles.fieldContainer}>
       <label className={styles.label}>{field.label} (Calculated)</label>
+      {field.description && <p className={styles.description}>{field.description}</p>}
       <div className={styles.calculationValue}>{value ?? 'N/A'}</div>
     </div>
   );

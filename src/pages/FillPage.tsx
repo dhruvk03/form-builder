@@ -162,6 +162,9 @@ export const FillPage: React.FC = () => {
         <Card className={styles.headerCard}>
           <div className={styles.headerAccent} />
           <h1 className={styles.title}>{template.title}</h1>
+          {template.description && (
+            <p className={styles.description}>{template.description}</p>
+          )}
           {submittedAt && (
             <p className={styles.submissionInfo}>
               Submitted on {new Date(submittedAt).toLocaleString()}

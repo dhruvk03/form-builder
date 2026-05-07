@@ -14,8 +14,11 @@ export const BuilderPage: React.FC = () => {
   const [template, setTemplate] = useState<FormTemplate>({
     id: id || generateId('tpl'),
     title: 'Untitled Form',
+    description: '',
     fields: [],
   });
+  const [activeFieldId, setActiveFieldId] = useState<string | null>(null);
+  const [isTitleActive, setIsTitleActive] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -32,11 +35,17 @@ export const BuilderPage: React.FC = () => {
     setTemplate((prev) => ({ ...prev, title: e.target.value }));
   };
 
+  const handleDescriptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTemplate((prev) => ({ ...prev, description: e.target.value }));
+  };
+
   const addField = (type: FieldType) => {
+    const newId = generateId('fld');
     const newField: FormField = {
-      id: generateId('fld'),
+      id: newId,
       type,
       label: `Question ${template.fields.length + 1}`,
+      description: '',
       required: false,
       ...(type === 'singleSelect' || type === 'multiSelect' ? { options: ['Option 1'], displayType: 'radio' } : {}),
       ...(type === 'calculation' ? { sourceFieldIds: [], aggregationType: 'sum' } : {}),
@@ -46,6 +55,8 @@ export const BuilderPage: React.FC = () => {
       ...prev,
       fields: [...prev.fields, newField],
     }));
+    setActiveFieldId(newId);
+    setIsTitleActive(false);
   };
 
   const updateField = (updatedField: FormField) => {
@@ -56,7 +67,6 @@ export const BuilderPage: React.FC = () => {
   };
 
   const deleteField = (fieldId: string) => {
-    // Check if other fields depend on this one
     const dependentFields = template.fields.filter((f) => {
       const hasDep = f.dependencies?.some((d) => d.fieldId === fieldId);
       const isSource = f.type === 'calculation' && f.sourceFieldIds.includes(fieldId);
@@ -72,6 +82,7 @@ export const BuilderPage: React.FC = () => {
       ...prev,
       fields: prev.fields.filter((f) => f.id !== fieldId),
     }));
+    if (activeFieldId === fieldId) setActiveFieldId(null);
   };
 
   const handleSave = () => {
@@ -111,26 +122,58 @@ export const BuilderPage: React.FC = () => {
       </header>
 
       <main className={styles.main}>
-        <Card className={styles.titleCard}>
-          <input
-            type="text"
-            className={styles.titleInput}
-            value={template.title}
-            onChange={handleTitleChange}
-            placeholder="Form Title"
-          />
+        <Card 
+          className={styles.titleCard} 
+          active={isTitleActive}
+          onClick={() => {
+            setIsTitleActive(true);
+            setActiveFieldId(null);
+          }}
+        >
           <div className={styles.titleAccent} />
+          <div className={styles.titleInfo}>
+            <input
+              type="text"
+              className={styles.titleInput}
+              value={template.title}
+              onChange={handleTitleChange}
+              placeholder="Form title"
+              onFocus={() => {
+                setIsTitleActive(true);
+                setActiveFieldId(null);
+              }}
+            />
+            <input
+              type="text"
+              className={styles.descriptionInput}
+              value={template.description || ''}
+              onChange={handleDescriptionChange}
+              placeholder="Form description"
+              onFocus={() => {
+                setIsTitleActive(true);
+                setActiveFieldId(null);
+              }}
+            />
+          </div>
         </Card>
 
         <div className={styles.fieldList}>
           {template.fields.map((field) => (
-            <FieldEditorCard
-              key={field.id}
-              field={field}
-              allFields={template.fields}
-              onUpdate={updateField}
-              onDelete={deleteField}
-            />
+            <div 
+              key={field.id} 
+              onClick={() => {
+                setActiveFieldId(field.id);
+                setIsTitleActive(false);
+              }}
+            >
+              <FieldEditorCard
+                field={field}
+                allFields={template.fields}
+                onUpdate={updateField}
+                onDelete={deleteField}
+                active={activeFieldId === field.id}
+              />
+            </div>
           ))}
         </div>
 

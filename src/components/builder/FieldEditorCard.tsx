@@ -1,5 +1,5 @@
 import React from 'react';
-import type { FormField, Dependency, DependencyOperator, DependencyAction } from '../../types/schema';
+import type { FormField, Dependency, DependencyOperator, DependencyAction, FieldType } from '../../types/schema';
 import { Card } from '../common/Card';
 import styles from './FieldEditorCard.module.css';
 
@@ -8,6 +8,7 @@ interface FieldEditorCardProps {
   allFields: FormField[];
   onUpdate: (field: FormField) => void;
   onDelete: (id: string) => void;
+  active?: boolean;
 }
 
 export const FieldEditorCard: React.FC<FieldEditorCardProps> = ({
@@ -15,6 +16,7 @@ export const FieldEditorCard: React.FC<FieldEditorCardProps> = ({
   allFields,
   onUpdate,
   onDelete,
+  active,
 }) => {
   const handleChange = (updates: Partial<FormField>) => {
     onUpdate({ ...field, ...updates } as FormField);
@@ -179,16 +181,40 @@ export const FieldEditorCard: React.FC<FieldEditorCardProps> = ({
   };
 
   return (
-    <Card className={styles.card}>
+    <Card className={styles.card} active={active}>
       <div className={styles.row}>
-        <input
-          type="text"
-          className={styles.labelInput}
-          value={field.label}
-          onChange={(e) => handleChange({ label: e.target.value })}
-          placeholder="Question Label"
-        />
-        <div className={styles.typeTag}>{field.type}</div>
+        <div className={styles.mainInfo}>
+          <input
+            type="text"
+            className={styles.labelInput}
+            value={field.label}
+            onChange={(e) => handleChange({ label: e.target.value })}
+            placeholder="Question"
+          />
+          <input
+            type="text"
+            className={styles.descriptionInput}
+            value={field.description || ''}
+            onChange={(e) => handleChange({ description: e.target.value })}
+            placeholder="Form description"
+          />
+        </div>
+        <select
+          className={styles.typeSelect}
+          value={field.type}
+          onChange={(e) => handleChange({ type: e.target.value as FieldType })}
+        >
+          <option value="singleLineText">Short answer</option>
+          <option value="multiLineText">Paragraph</option>
+          <option value="singleSelect">Multiple choice</option>
+          <option value="multiSelect">Checkboxes</option>
+          <option value="dropdown">Dropdown</option>
+          <option value="fileUpload">File upload</option>
+          <option value="number">Number</option>
+          <option value="date">Date</option>
+          <option value="calculation">Calculation</option>
+          <option value="sectionHeader">Section Header</option>
+        </select>
       </div>
 
       <div className={styles.content}>
