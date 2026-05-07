@@ -121,7 +121,7 @@ export const BuilderPage: React.FC = () => {
   };
 
   return (
-    <div className={styles.container}>
+    <div className="layout-container">
       <main className={styles.main}>
         <div className={styles.toolBar}>
           <button className={styles.saveButton} onClick={handleSave}>

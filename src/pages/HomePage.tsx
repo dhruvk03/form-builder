@@ -20,7 +20,7 @@ export const HomePage: React.FC = () => {
   };
 
   return (
-    <div className={styles.container}>
+    <div className="layout-container">
       <main className={styles.main}>
         <div className={styles.toolBar}>
           <button 

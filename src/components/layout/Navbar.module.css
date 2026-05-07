@@ -7,17 +7,10 @@
   width: 100%;
 }
 
-.content {
-  max-width: 770px;
-  margin: 0 auto;
-  padding: 0 20px;
-  display: flex;
-  justify-content: center;
-}
-
 .tabs {
   display: flex;
   gap: 24px;
+  justify-content: center;
 }
 
 .tab {

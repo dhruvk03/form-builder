@@ -8,7 +8,7 @@ export const Navbar: React.FC = () => {
 
   return (
     <nav className={`${styles.navbar} no-print`}>
-      <div className={styles.content}>
+      <div className="layout-container">
         <div className={styles.tabs}>
           <NavLink 
             to="/" 

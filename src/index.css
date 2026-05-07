@@ -30,16 +30,21 @@ body {
 
 #root {
   width: 100%;
-  max-width: 770px;
-  margin: 0 auto;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
 
+.layout-container {
+  width: 100%;
+  max-width: 770px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
 main {
   flex: 1;
-  padding-bottom: 80px; /* Ensure space at the bottom */
+  width: 100%;
 }
 
 h1, h2, h3, h4, h5, h6 {
