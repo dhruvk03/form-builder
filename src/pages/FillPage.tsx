@@ -174,25 +174,24 @@ return (
         )}      </Card>
 
       <form onSubmit={handleSubmit} className={styles.form}>
-...
-          <FormRenderer
-            fields={template.fields}
-            values={{ ...values, ...calculatedValues }}
-            onValueChange={handleValueChange}
-            errors={errors}
-            visibleFields={visibleFields}
-            requiredFields={requiredFields}
-            readOnly={isReadOnly}
-          />
+        <FormRenderer
+          fields={template.fields}
+          values={{ ...values, ...calculatedValues }}
+          onValueChange={handleValueChange}
+          errors={errors}
+          visibleFields={visibleFields}
+          requiredFields={requiredFields}
+          readOnly={isReadOnly}
+        />
 
-          {!isReadOnly && (
-            <div className={`${styles.footer} no-print`}>
-              <button type="submit" className={styles.submitButton}>
-                Submit
-              </button>
-            </div>
-          )}
-        </form>
+        {!isReadOnly && (
+          <div className={`${styles.footer} no-print`}>
+            <button type="submit" className={styles.submitButton}>
+              Submit
+            </button>
+          </div>
+        )}
+      </form>
       </main>
 
       {/* Print-only footer or additional info if needed */}

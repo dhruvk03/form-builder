@@ -25,16 +25,21 @@ body {
   color: var(--color-text-primary);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
 }
 
 #root {
   width: 100%;
+  max-width: 770px;
+  margin: 0 auto;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: var(--color-background);
-  max-width: 777px;
-  margin: 0 auto;
+}
+
+main {
+  flex: 1;
+  padding-bottom: 80px; /* Ensure space at the bottom */
 }
 
 h1, h2, h3, h4, h5, h6 {

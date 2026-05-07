@@ -61,13 +61,21 @@ export const HomePage: React.FC = () => {
                     <ul className={styles.responseList}>
                       {getResponsesForTemplate(template.id).map((response) => (
                         <li key={response.id} className={styles.responseItem}>
-                          <span>Submitted on {new Date(response.submittedAt).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}</span>
-                          <Link 
-                            to={`/fill/${template.id}/${response.id}?print=true`} 
-                            className={styles.viewLink}
-                          >
-                            View / PDF
-                          </Link>
+                          <span className={styles.responseDate}>Submitted on {new Date(response.submittedAt).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}</span>
+                          <div className={styles.responseActions}>
+                            <Link 
+                              to={`/fill/${template.id}/${response.id}`} 
+                              className={styles.viewLink}
+                            >
+                              View
+                            </Link>
+                            <Link 
+                              to={`/fill/${template.id}/${response.id}?print=true`} 
+                              className={styles.pdfLink}
+                            >
+                              PDF
+                            </Link>
+                          </div>
                         </li>
                       ))}
                     </ul>
