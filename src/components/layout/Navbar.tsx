@@ -7,7 +7,7 @@ export const Navbar: React.FC = () => {
   const isFillPage = location.pathname.startsWith('/fill');
 
   return (
-    <nav className={styles.navbar}>
+    <nav className={`${styles.navbar} no-print`}>
       <div className={styles.content}>
         <div className={styles.tabs}>
           <NavLink 

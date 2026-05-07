@@ -20,6 +20,15 @@ export const FillPage: React.FC = () => {
   const [submittedAt, setSubmittedAt] = useState<string | null>(null);
 
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('print') === 'true' && template && isReadOnly) {
+      setTimeout(() => {
+        window.print();
+      }, 500);
+    }
+  }, [template, isReadOnly]);
+
+  useEffect(() => {
     const templates = loadTemplates();
     const foundTemplate = templates.find(t => t.id === templateId);
     if (!foundTemplate) {
@@ -160,10 +169,9 @@ return (
         )}
         {submittedAt && (
           <p className={styles.submissionInfo}>
-            Submitted on {new Date(submittedAt).toLocaleString()}
+            Submitted on {new Date(submittedAt).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}
           </p>
-        )}
-      </Card>
+        )}      </Card>
 
       <form onSubmit={handleSubmit} className={styles.form}>
 ...

@@ -61,9 +61,9 @@ export const HomePage: React.FC = () => {
                     <ul className={styles.responseList}>
                       {getResponsesForTemplate(template.id).map((response) => (
                         <li key={response.id} className={styles.responseItem}>
-                          <span>Submitted on {new Date(response.submittedAt).toLocaleString()}</span>
+                          <span>Submitted on {new Date(response.submittedAt).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}</span>
                           <Link 
-                            to={`/fill/${template.id}/${response.id}`} 
+                            to={`/fill/${template.id}/${response.id}?print=true`} 
                             className={styles.viewLink}
                           >
                             View / PDF

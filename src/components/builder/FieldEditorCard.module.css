@@ -170,6 +170,11 @@
   margin-top: 24px;
 }
 
+.dependenciesDivider {
+  border-top: 1px solid var(--color-border);
+  margin-bottom: 24px;
+}
+
 .sectionHeader {
   display: flex;
   justify-content: space-between;
@@ -229,7 +234,6 @@
   align-items: center;
   gap: 24px;
   padding-top: 20px;
-  border-top: 1px solid var(--color-border);
 }
 
 .requiredToggle {
@@ -250,10 +254,12 @@
 
 .deleteButton {
   padding: 8px;
-  color: var(--color-text-secondary);
+  color: #1a73e8;
+  font-weight: 500;
 }
 
 .deleteButton:hover {
-  color: var(--color-error);
+  color: #1557b0;
+  text-decoration: underline;
 }
 

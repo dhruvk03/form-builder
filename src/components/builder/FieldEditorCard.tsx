@@ -268,6 +268,7 @@ export const FieldEditorCard: React.FC<FieldEditorCardProps> = ({
 
         {allFields.length > 1 && (
           <div className={styles.dependenciesSection}>
+            <div className={styles.dependenciesDivider} />
             <div className={styles.sectionHeader}>
               <h4>Dependencies</h4>
               <button 
