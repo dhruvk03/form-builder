@@ -254,13 +254,6 @@ export const FieldEditorCard: React.FC<FieldEditorCardProps> = ({
             onChange={(e) => handleChange({ label: e.target.value })}
             placeholder="Question"
           />
-          <input
-            type="text"
-            className={styles.descriptionInput}
-            value={field.description || ''}
-            onChange={(e) => handleChange({ description: e.target.value })}
-            placeholder="Form description"
-          />
         </div>
         <Select
           className={styles.typeSelect}
@@ -273,48 +266,48 @@ export const FieldEditorCard: React.FC<FieldEditorCardProps> = ({
       <div className={styles.content}>
         {renderConfig()}
 
-        <div className={styles.dependenciesSection}>
-          <div className={styles.sectionHeader}>
-            <h4>Dependencies</h4>
-            <button 
-              onClick={addDependency} 
-              className={styles.addButton}
-              disabled={allFields.length <= 1}
-              title={allFields.length <= 1 ? "Add more fields to enable dependencies" : ""}
-            >
-              + Add Dependency
-            </button>
-          </div>
-          {field.dependencies?.map((dep, index) => (
-            <div key={index} className={styles.dependencyRow}>
-              <Select
-                options={allFields
-                  .filter(f => f.id !== field.id)
-                  .map(f => ({ value: f.id, label: f.label }))}
-                value={dep.fieldId}
-                onChange={(value) => updateDependency(index, { fieldId: value })}
-              />
-              <Select
-                options={OPERATOR_OPTIONS}
-                value={dep.operator}
-                onChange={(value) => updateDependency(index, { operator: value as DependencyOperator })}
-              />
-              <input
-                type="text"
-                className={styles.dependencyValueInput}
-                value={dep.value}
-                onChange={(e) => updateDependency(index, { value: e.target.value })}
-                placeholder="Value"
-              />
-              <Select
-                options={ACTION_OPTIONS}
-                value={dep.action}
-                onChange={(value) => updateDependency(index, { action: value as DependencyAction })}
-              />
-              <button onClick={() => removeDependency(index)} className={styles.deleteButtonSmall}>×</button>
+        {allFields.length > 1 && (
+          <div className={styles.dependenciesSection}>
+            <div className={styles.sectionHeader}>
+              <h4>Dependencies</h4>
+              <button 
+                onClick={addDependency} 
+                className={styles.addButton}
+              >
+                + Add Dependency
+              </button>
             </div>
-          ))}
-        </div>
+            {field.dependencies?.map((dep, index) => (
+              <div key={index} className={styles.dependencyRow}>
+                <Select
+                  options={allFields
+                    .filter(f => f.id !== field.id)
+                    .map(f => ({ value: f.id, label: f.label }))}
+                  value={dep.fieldId}
+                  onChange={(value) => updateDependency(index, { fieldId: value })}
+                />
+                <Select
+                  options={OPERATOR_OPTIONS}
+                  value={dep.operator}
+                  onChange={(value) => updateDependency(index, { operator: value as DependencyOperator })}
+                />
+                <input
+                  type="text"
+                  className={styles.dependencyValueInput}
+                  value={dep.value}
+                  onChange={(e) => updateDependency(index, { value: e.target.value })}
+                  placeholder="Value"
+                />
+                <Select
+                  options={ACTION_OPTIONS}
+                  value={dep.action}
+                  onChange={(value) => updateDependency(index, { action: value as DependencyAction })}
+                />
+                <button onClick={() => removeDependency(index)} className={styles.deleteButtonSmall}>×</button>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className={styles.footer}>
