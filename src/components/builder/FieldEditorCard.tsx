@@ -130,10 +130,11 @@ export const FieldEditorCard: React.FC<FieldEditorCardProps> = ({
 
       case 'singleSelect':
       case 'multiSelect':
+        const options = field.options || [];
         return (
           <div className={styles.optionsSection}>
             <label className={styles.configLabel}>Options</label>
-            {field.options.map((option, index) => (
+            {options.map((option, index) => (
               <div key={index} className={styles.optionRow}>
                 <span className={styles.optionIcon}>
                   {field.type === 'singleSelect' ? '○' : '□'}
@@ -143,17 +144,17 @@ export const FieldEditorCard: React.FC<FieldEditorCardProps> = ({
                   className={styles.optionInput}
                   value={option}
                   onChange={(e) => {
-                    const newOptions = [...field.options];
+                    const newOptions = [...options];
                     newOptions[index] = e.target.value;
                     handleChange({ options: newOptions });
                   }}
                   placeholder={`Option ${index + 1}`}
                 />
-                {field.options.length > 1 && (
+                {options.length > 1 && (
                   <button 
                     className={styles.removeOption}
                     onClick={() => {
-                      const newOptions = field.options.filter((_, i) => i !== index);
+                      const newOptions = options.filter((_, i) => i !== index);
                       handleChange({ options: newOptions });
                     }}
                   >
@@ -164,7 +165,7 @@ export const FieldEditorCard: React.FC<FieldEditorCardProps> = ({
             ))}
             <button 
               className={styles.addOptionButton}
-              onClick={() => handleChange({ options: [...field.options, `Option ${field.options.length + 1}`] })}
+              onClick={() => handleChange({ options: [...options, `Option ${options.length + 1}`] })}
             >
               + Add option
             </button>
@@ -184,6 +185,7 @@ export const FieldEditorCard: React.FC<FieldEditorCardProps> = ({
       
       case 'calculation':
         const otherFields = allFields.filter(f => f.id !== field.id && f.type === 'number');
+        const sourceFieldIds = field.sourceFieldIds || [];
         return (
           <div className={styles.configGrid}>
             <div className={styles.inputGroupFull}>
@@ -193,11 +195,11 @@ export const FieldEditorCard: React.FC<FieldEditorCardProps> = ({
                   <label key={f.id} className={styles.checkboxItem}>
                     <input
                       type="checkbox"
-                      checked={field.sourceFieldIds.includes(f.id)}
+                      checked={sourceFieldIds.includes(f.id)}
                       onChange={(e) => {
                         const newSources = e.target.checked
-                          ? [...field.sourceFieldIds, f.id]
-                          : field.sourceFieldIds.filter(id => id !== f.id);
+                          ? [...sourceFieldIds, f.id]
+                          : sourceFieldIds.filter(id => id !== f.id);
                         handleChange({ sourceFieldIds: newSources });
                       }}
                     />
@@ -259,7 +261,21 @@ export const FieldEditorCard: React.FC<FieldEditorCardProps> = ({
           className={styles.typeSelect}
           options={FIELD_TYPE_OPTIONS}
           value={field.type}
-          onChange={(value) => handleChange({ type: value as FieldType })}
+          onChange={(value) => {
+            const newType = value as FieldType;
+            const updates: Partial<FormField> = { type: newType };
+            
+            if ((newType === 'singleSelect' || newType === 'multiSelect') && !field.options) {
+              updates.options = ['Option 1'];
+              updates.displayType = 'radio';
+            }
+            if (newType === 'calculation' && !field.sourceFieldIds) {
+              updates.sourceFieldIds = [];
+              updates.aggregationType = 'sum';
+            }
+            
+            handleChange(updates);
+          }}
         />
       </div>
 
