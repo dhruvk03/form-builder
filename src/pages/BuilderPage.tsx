@@ -180,18 +180,28 @@ export const BuilderPage: React.FC = () => {
         {saveError && <div className={styles.errorBanner}>{saveError}</div>}
 
         <div className={styles.addFieldContainer}>
-          <p className={styles.addFieldLabel}>Add Field:</p>
-          <div className={styles.buttonGrid}>
-            <button onClick={() => addField('singleLineText')}>Short Text</button>
-            <button onClick={() => addField('multiLineText')}>Long Text</button>
-            <button onClick={() => addField('number')}>Number</button>
-            <button onClick={() => addField('date')}>Date</button>
-            <button onClick={() => addField('singleSelect')}>Single Select</button>
-            <button onClick={() => addField('multiSelect')}>Multi Select</button>
-            <button onClick={() => addField('fileUpload')}>File Upload</button>
-            <button onClick={() => addField('sectionHeader')}>Section Header</button>
-            <button onClick={() => addField('calculation')}>Calculation</button>
-          </div>
+          <p className={styles.addFieldLabel}>Add New Question:</p>
+          <select 
+            className={styles.typeSelectLarge}
+            onChange={(e) => {
+              if (e.target.value) {
+                addField(e.target.value as FieldType);
+                e.target.value = '';
+              }
+            }}
+            defaultValue=""
+          >
+            <option value="" disabled>Select field type...</option>
+            <option value="singleLineText">Short Text</option>
+            <option value="multiLineText">Long Text</option>
+            <option value="number">Number</option>
+            <option value="date">Date</option>
+            <option value="singleSelect">Multiple Choice (Radio)</option>
+            <option value="multiSelect">Checkboxes</option>
+            <option value="fileUpload">File Upload</option>
+            <option value="sectionHeader">Section Header</option>
+            <option value="calculation">Calculation</option>
+          </select>
         </div>
       </main>
     </div>

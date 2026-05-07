@@ -90,17 +90,46 @@ export const FieldEditorCard: React.FC<FieldEditorCardProps> = ({
       case 'singleSelect':
       case 'multiSelect':
         return (
-          <div className={styles.configGrid}>
-            <div className={styles.inputGroupFull}>
-              <label>Options (one per line)</label>
-              <textarea
-                value={field.options.join('\n')}
-                onChange={(e) => handleChange({ options: e.target.value.split('\n').filter(o => o.trim()) })}
-                rows={4}
-              />
-            </div>
+          <div className={styles.optionsSection}>
+            <label className={styles.configLabel}>Options</label>
+            {field.options.map((option, index) => (
+              <div key={index} className={styles.optionRow}>
+                <span className={styles.optionIcon}>
+                  {field.type === 'singleSelect' ? '○' : '□'}
+                </span>
+                <input
+                  type="text"
+                  className={styles.optionInput}
+                  value={option}
+                  onChange={(e) => {
+                    const newOptions = [...field.options];
+                    newOptions[index] = e.target.value;
+                    handleChange({ options: newOptions });
+                  }}
+                  placeholder={`Option ${index + 1}`}
+                />
+                {field.options.length > 1 && (
+                  <button 
+                    className={styles.removeOption}
+                    onClick={() => {
+                      const newOptions = field.options.filter((_, i) => i !== index);
+                      handleChange({ options: newOptions });
+                    }}
+                  >
+                    ×
+                  </button>
+                )}
+              </div>
+            ))}
+            <button 
+              className={styles.addOptionButton}
+              onClick={() => handleChange({ options: [...field.options, `Option ${field.options.length + 1}`] })}
+            >
+              + Add option
+            </button>
+            
             {field.type === 'singleSelect' && (
-              <div className={styles.inputGroup}>
+              <div className={styles.inputGroup} style={{ marginTop: '16px' }}>
                 <label>Display Type</label>
                 <select
                   value={field.displayType}
