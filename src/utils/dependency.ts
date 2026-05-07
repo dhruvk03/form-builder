@@ -62,8 +62,8 @@ export const detectCycles = (fields: FormField[]): string | null => {
   const adj = new Map<string, string[]>();
   for (const field of fields) {
     const deps = field.dependencies?.map((d) => d.fieldId) || [];
-    if (field.type === 'calculation') {
-      deps.push(...field.sourceFieldIds);
+    if (field.type === 'calculation' && (field as any).sourceFieldIds) {
+      deps.push(...(field as any).sourceFieldIds);
     }
     adj.set(field.id, deps);
   }

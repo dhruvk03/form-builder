@@ -9,7 +9,6 @@ const FIELD_TYPE_OPTIONS = [
   { value: 'multiLineText', label: 'Paragraph' },
   { value: 'singleSelect', label: 'Multiple choice' },
   { value: 'multiSelect', label: 'Checkboxes' },
-  { value: 'dropdown', label: 'Dropdown' },
   { value: 'fileUpload', label: 'File upload' },
   { value: 'number', label: 'Number' },
   { value: 'date', label: 'Date' },
@@ -256,6 +255,7 @@ export const FieldEditorCard: React.FC<FieldEditorCardProps> = ({
             onChange={(e) => handleChange({ label: e.target.value })}
             placeholder="Question"
           />
+          {!field.label.trim() && <span className={styles.requiredIndicator}>*</span>}
         </div>
         <Select
           className={styles.typeSelect}
@@ -263,18 +263,18 @@ export const FieldEditorCard: React.FC<FieldEditorCardProps> = ({
           value={field.type}
           onChange={(value) => {
             const newType = value as FieldType;
-            const updates: Partial<FormField> = { type: newType };
+            const updates: any = { type: newType };
             
-            if ((newType === 'singleSelect' || newType === 'multiSelect') && !field.options) {
+            if ((newType === 'singleSelect' || newType === 'multiSelect') && !('options' in field)) {
               updates.options = ['Option 1'];
               updates.displayType = 'radio';
             }
-            if (newType === 'calculation' && !field.sourceFieldIds) {
+            if (newType === 'calculation' && !('sourceFieldIds' in field)) {
               updates.sourceFieldIds = [];
               updates.aggregationType = 'sum';
             }
             
-            handleChange(updates);
+            handleChange(updates as Partial<FormField>);
           }}
         />
       </div>

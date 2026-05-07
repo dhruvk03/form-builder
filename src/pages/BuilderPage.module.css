@@ -5,12 +5,15 @@
 .toolBar {
   display: flex;
   justify-content: flex-end;
-  padding: 20px 0;
-  margin-bottom: 20px;
+  align-items: center;
+  padding: 16px 20px;
+  margin: 0 -20px 20px -20px;
   position: sticky;
-  top: 52px; /* Height of the Navbar */
-  z-index: 100;
+  top: 53px;
+  /* Align with navbar */
+  z-index: 110;
   background-color: var(--color-background);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .saveButton {
@@ -21,6 +24,29 @@
   padding: 10px 24px;
   font-weight: 500;
   box-shadow: var(--shadow-sm);
+  transition: all 0.2s;
+}
+
+.toolbarError {
+  color: var(--color-error);
+  font-size: 14px;
+  margin-right: auto;
+  font-weight: 500;
+}
+
+.titleInputWrapper {
+  position: relative;
+  width: 100%;
+}
+
+.requiredIndicator {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  color: var(--color-error);
+  font-size: 24px;
+  pointer-events: none;
 }
 
 .titleCard {
@@ -55,6 +81,11 @@
   padding: 8px 0;
   color: var(--color-text-primary);
   transition: border-bottom 0.2s;
+}
+
+.titleInput::placeholder {
+  color: var(--color-text-secondary);
+  opacity: 0.6;
 }
 
 .titleInput:focus {

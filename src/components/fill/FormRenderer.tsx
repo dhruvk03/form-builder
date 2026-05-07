@@ -26,7 +26,7 @@ const TextInput: React.FC<FieldRendererProps> = ({ field, value, onChange, error
         className={styles.input}
         value={value || ''}
         onChange={(e) => onChange(e.target.value)}
-        placeholder={field.placeholder}
+        placeholder={readOnly ? '' : field.placeholder}
         disabled={readOnly}
         rows={field.type === 'multiLineText' ? field.rows || 3 : undefined}
       />

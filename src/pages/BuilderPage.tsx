@@ -3,7 +3,6 @@ import { useParams, useNavigate } from 'react-router-dom';
 import type { FormTemplate, FormField, FieldType } from '../types/schema';
 import { loadTemplates, addTemplate } from '../utils/storage';
 import { generateId } from '../utils/id';
-import { detectCycles } from '../utils/dependency';
 import { Card } from '../components/common/Card';
 import { FieldEditorCard } from '../components/builder/FieldEditorCard';
 import styles from './BuilderPage.module.css';
@@ -27,13 +26,15 @@ export const BuilderPage: React.FC = () => {
   const navigate = useNavigate();
   const [template, setTemplate] = useState<FormTemplate>({
     id: id || generateId('tpl'),
-    title: 'Untitled Form',
+    title: '',
     description: '',
     fields: [],
   });
   const [activeFieldId, setActiveFieldId] = useState<string | null>(null);
   const [isTitleActive, setIsTitleActive] = useState(false);
-  const [saveError, setSaveError] = useState<string | null>(null);
+
+  // Derived validation state
+  const isTitleValid = template.title.trim().length > 0;
 
   useEffect(() => {
     if (id) {
@@ -58,7 +59,7 @@ export const BuilderPage: React.FC = () => {
     const newField: FormField = {
       id: newId,
       type,
-      label: `Question ${template.fields.length + 1}`,
+      label: '',
       description: '',
       required: false,
       ...(type === 'singleSelect' || type === 'multiSelect' ? { options: ['Option 1'], displayType: 'radio' } : {}),
@@ -100,22 +101,6 @@ export const BuilderPage: React.FC = () => {
   };
 
   const handleSave = () => {
-    if (!template.title.trim()) {
-      setSaveError('Form title is required');
-      return;
-    }
-
-    if (template.fields.length === 0) {
-      setSaveError('At least one field is required');
-      return;
-    }
-
-    const cycleError = detectCycles(template.fields);
-    if (cycleError) {
-      setSaveError(cycleError);
-      return;
-    }
-
     addTemplate(template);
     navigate('/');
   };
@@ -124,7 +109,10 @@ export const BuilderPage: React.FC = () => {
     <div className="layout-container">
       <main className={styles.main}>
         <div className={styles.toolBar}>
-          <button className={styles.saveButton} onClick={handleSave}>
+          <button 
+            className={styles.saveButton} 
+            onClick={handleSave}
+          >
             Save Template
           </button>
         </div>
@@ -139,17 +127,20 @@ export const BuilderPage: React.FC = () => {
         >
           <div className={styles.titleAccent} />
           <div className={styles.titleInfo}>
-            <input
-              type="text"
-              className={styles.titleInput}
-              value={template.title}
-              onChange={handleTitleChange}
-              placeholder="Form title"
-              onFocus={() => {
-                setIsTitleActive(true);
-                setActiveFieldId(null);
-              }}
-            />
+            <div className={styles.titleInputWrapper}>
+              <input
+                type="text"
+                className={styles.titleInput}
+                value={template.title}
+                onChange={handleTitleChange}
+                placeholder="Form title"
+                onFocus={() => {
+                  setIsTitleActive(true);
+                  setActiveFieldId(null);
+                }}
+              />
+              {!isTitleValid && <span className={styles.requiredIndicator}>*</span>}
+            </div>
             <input
               type="text"
               className={styles.descriptionInput}
@@ -183,8 +174,6 @@ export const BuilderPage: React.FC = () => {
             </div>
           ))}
         </div>
-
-        {saveError && <div className={styles.errorBanner}>{saveError}</div>}
 
         <div className={styles.addFieldContainer}>
           <p className={styles.addFieldLabel}>Add New Question:</p>
