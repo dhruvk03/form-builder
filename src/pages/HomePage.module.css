@@ -2,7 +2,6 @@
   width: 100%;
   max-width: 770px;
   margin: 0 auto;
-  padding: 40px 20px;
 }
 
 .toolBar {
@@ -10,6 +9,10 @@
   justify-content: flex-end;
   padding: 20px 0;
   margin-bottom: 20px;
+  position: sticky;
+  top: 52px;
+  z-index: 100;
+  background-color: var(--color-background);
 }
 
 .createButton {
