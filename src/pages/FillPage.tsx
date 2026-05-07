@@ -142,37 +142,31 @@ export const FillPage: React.FC = () => {
   };
 
   if (!template) return <div>Loading...</div>;
-
-  return (
-    <div className={styles.container}>
-      <header className={`${styles.header} no-print`}>
-        <button className={styles.backButton} onClick={() => navigate('/')}>
-          ← Back
-        </button>
-        <div className={styles.headerActions}>
+return (
+  <div className={styles.container}>
+    <main className={styles.main}>
+      <Card className={styles.headerCard}>
+        <div className={styles.headerAccent} />
+        <div className={styles.titleRow}>
+          <h1 className={styles.title}>{template.title}</h1>
           {isReadOnly && (
-            <button className={styles.printButton} onClick={handlePrint}>
+            <button className={`${styles.printButton} no-print`} onClick={handlePrint}>
               Download PDF
             </button>
           )}
         </div>
-      </header>
+        {template.description && (
+          <p className={styles.description}>{template.description}</p>
+        )}
+        {submittedAt && (
+          <p className={styles.submissionInfo}>
+            Submitted on {new Date(submittedAt).toLocaleString()}
+          </p>
+        )}
+      </Card>
 
-      <main className={styles.main}>
-        <Card className={styles.headerCard}>
-          <div className={styles.headerAccent} />
-          <h1 className={styles.title}>{template.title}</h1>
-          {template.description && (
-            <p className={styles.description}>{template.description}</p>
-          )}
-          {submittedAt && (
-            <p className={styles.submissionInfo}>
-              Submitted on {new Date(submittedAt).toLocaleString()}
-            </p>
-          )}
-        </Card>
-
-        <form onSubmit={handleSubmit} className={styles.form}>
+      <form onSubmit={handleSubmit} className={styles.form}>
+...
           <FormRenderer
             fields={template.fields}
             values={{ ...values, ...calculatedValues }}

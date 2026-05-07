@@ -1,7 +1,48 @@
 import React from 'react';
 import type { FormField, Dependency, DependencyOperator, DependencyAction, FieldType } from '../../types/schema';
 import { Card } from '../common/Card';
+import { Select } from '../common/Select';
 import styles from './FieldEditorCard.module.css';
+
+const FIELD_TYPE_OPTIONS = [
+  { value: 'singleLineText', label: 'Short answer' },
+  { value: 'multiLineText', label: 'Paragraph' },
+  { value: 'singleSelect', label: 'Multiple choice' },
+  { value: 'multiSelect', label: 'Checkboxes' },
+  { value: 'dropdown', label: 'Dropdown' },
+  { value: 'fileUpload', label: 'File upload' },
+  { value: 'number', label: 'Number' },
+  { value: 'date', label: 'Date' },
+  { value: 'calculation', label: 'Calculation' },
+  { value: 'sectionHeader', label: 'Section Header' },
+];
+
+const DISPLAY_TYPE_OPTIONS = [
+  { value: 'radio', label: 'Radio' },
+  { value: 'dropdown', label: 'Dropdown' },
+  { value: 'tiles', label: 'Tiles' },
+];
+
+const AGGREGATION_OPTIONS = [
+  { value: 'sum', label: 'Sum' },
+  { value: 'average', label: 'Average' },
+  { value: 'minimum', label: 'Minimum' },
+  { value: 'maximum', label: 'Maximum' },
+];
+
+const OPERATOR_OPTIONS = [
+  { value: 'equals', label: 'Equals' },
+  { value: 'notEquals', label: 'Not Equals' },
+  { value: 'greaterThan', label: 'Greater Than' },
+  { value: 'lessThan', label: 'Less Than' },
+];
+
+const ACTION_OPTIONS = [
+  { value: 'show', label: 'Show' },
+  { value: 'hide', label: 'Hide' },
+  { value: 'require', label: 'Require' },
+  { value: 'optional', label: 'Optional' },
+];
 
 interface FieldEditorCardProps {
   field: FormField;
@@ -131,14 +172,11 @@ export const FieldEditorCard: React.FC<FieldEditorCardProps> = ({
             {field.type === 'singleSelect' && (
               <div className={styles.inputGroup} style={{ marginTop: '16px' }}>
                 <label>Display Type</label>
-                <select
+                <Select
+                  options={DISPLAY_TYPE_OPTIONS}
                   value={field.displayType}
-                  onChange={(e) => handleChange({ displayType: e.target.value as any })}
-                >
-                  <option value="radio">Radio</option>
-                  <option value="dropdown">Dropdown</option>
-                  <option value="tiles">Tiles</option>
-                </select>
+                  onChange={(value) => handleChange({ displayType: value as any })}
+                />
               </div>
             )}
           </div>
@@ -170,15 +208,11 @@ export const FieldEditorCard: React.FC<FieldEditorCardProps> = ({
             </div>
             <div className={styles.inputGroup}>
               <label>Aggregation</label>
-              <select
+              <Select
+                options={AGGREGATION_OPTIONS}
                 value={field.aggregationType}
-                onChange={(e) => handleChange({ aggregationType: e.target.value as any })}
-              >
-                <option value="sum">Sum</option>
-                <option value="average">Average</option>
-                <option value="minimum">Minimum</option>
-                <option value="maximum">Maximum</option>
-              </select>
+                onChange={(value) => handleChange({ aggregationType: value as any })}
+              />
             </div>
           </div>
         );
@@ -228,22 +262,12 @@ export const FieldEditorCard: React.FC<FieldEditorCardProps> = ({
             placeholder="Form description"
           />
         </div>
-        <select
+        <Select
           className={styles.typeSelect}
+          options={FIELD_TYPE_OPTIONS}
           value={field.type}
-          onChange={(e) => handleChange({ type: e.target.value as FieldType })}
-        >
-          <option value="singleLineText">Short answer</option>
-          <option value="multiLineText">Paragraph</option>
-          <option value="singleSelect">Multiple choice</option>
-          <option value="multiSelect">Checkboxes</option>
-          <option value="dropdown">Dropdown</option>
-          <option value="fileUpload">File upload</option>
-          <option value="number">Number</option>
-          <option value="date">Date</option>
-          <option value="calculation">Calculation</option>
-          <option value="sectionHeader">Section Header</option>
-        </select>
+          onChange={(value) => handleChange({ type: value as FieldType })}
+        />
       </div>
 
       <div className={styles.content}>
@@ -252,42 +276,41 @@ export const FieldEditorCard: React.FC<FieldEditorCardProps> = ({
         <div className={styles.dependenciesSection}>
           <div className={styles.sectionHeader}>
             <h4>Dependencies</h4>
-            <button onClick={addDependency} className={styles.addButton}>+ Add Dependency</button>
+            <button 
+              onClick={addDependency} 
+              className={styles.addButton}
+              disabled={allFields.length <= 1}
+              title={allFields.length <= 1 ? "Add more fields to enable dependencies" : ""}
+            >
+              + Add Dependency
+            </button>
           </div>
           {field.dependencies?.map((dep, index) => (
             <div key={index} className={styles.dependencyRow}>
-              <select
+              <Select
+                options={allFields
+                  .filter(f => f.id !== field.id)
+                  .map(f => ({ value: f.id, label: f.label }))}
                 value={dep.fieldId}
-                onChange={(e) => updateDependency(index, { fieldId: e.target.value })}
-              >
-                {allFields.filter(f => f.id !== field.id).map(f => (
-                  <option key={f.id} value={f.id}>{f.label}</option>
-                ))}
-              </select>
-              <select
+                onChange={(value) => updateDependency(index, { fieldId: value })}
+              />
+              <Select
+                options={OPERATOR_OPTIONS}
                 value={dep.operator}
-                onChange={(e) => updateDependency(index, { operator: e.target.value as DependencyOperator })}
-              >
-                <option value="equals">Equals</option>
-                <option value="notEquals">Not Equals</option>
-                <option value="greaterThan">Greater Than</option>
-                <option value="lessThan">Less Than</option>
-              </select>
+                onChange={(value) => updateDependency(index, { operator: value as DependencyOperator })}
+              />
               <input
                 type="text"
+                className={styles.dependencyValueInput}
                 value={dep.value}
                 onChange={(e) => updateDependency(index, { value: e.target.value })}
                 placeholder="Value"
               />
-              <select
+              <Select
+                options={ACTION_OPTIONS}
                 value={dep.action}
-                onChange={(e) => updateDependency(index, { action: e.target.value as DependencyAction })}
-              >
-                <option value="show">Show</option>
-                <option value="hide">Hide</option>
-                <option value="require">Require</option>
-                <option value="optional">Optional</option>
-              </select>
+                onChange={(value) => updateDependency(index, { action: value as DependencyAction })}
+              />
               <button onClick={() => removeDependency(index)} className={styles.deleteButtonSmall}>×</button>
             </div>
           ))}

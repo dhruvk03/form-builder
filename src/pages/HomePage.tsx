@@ -21,17 +21,16 @@ export const HomePage: React.FC = () => {
 
   return (
     <div className={styles.container}>
-      <header className={styles.header}>
-        <h1 className={styles.title}>Form Builder</h1>
-        <button 
-          className={styles.createButton}
-          onClick={() => navigate('/builder')}
-        >
-          + New Template
-        </button>
-      </header>
-
       <main className={styles.main}>
+        <div className={styles.toolBar}>
+          <button 
+            className={styles.createButton}
+            onClick={() => navigate('/builder')}
+          >
+            + New Template
+          </button>
+        </div>
+
         {templates.length === 0 ? (
           <div className={styles.emptyState}>
             <p>No templates created yet.</p>

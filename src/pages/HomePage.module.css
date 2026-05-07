@@ -5,17 +5,11 @@
   padding: 40px 20px;
 }
 
-.header {
+.toolBar {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 32px;
-}
-
-.title {
-  color: var(--color-primary);
-  font-size: 32px;
-  font-weight: 500;
+  justify-content: flex-end;
+  padding: 20px 0;
+  margin-bottom: 20px;
 }
 
 .createButton {

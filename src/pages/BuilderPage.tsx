@@ -8,6 +8,20 @@ import { Card } from '../components/common/Card';
 import { FieldEditorCard } from '../components/builder/FieldEditorCard';
 import styles from './BuilderPage.module.css';
 
+import { Select } from '../components/common/Select';
+
+const FIELD_TYPE_OPTIONS = [
+  { value: 'singleLineText', label: 'Short Text' },
+  { value: 'multiLineText', label: 'Long Text' },
+  { value: 'number', label: 'Number' },
+  { value: 'date', label: 'Date' },
+  { value: 'singleSelect', label: 'Multiple Choice (Radio)' },
+  { value: 'multiSelect', label: 'Checkboxes' },
+  { value: 'fileUpload', label: 'File Upload' },
+  { value: 'sectionHeader', label: 'Section Header' },
+  { value: 'calculation', label: 'Calculation' },
+];
+
 export const BuilderPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -108,20 +122,13 @@ export const BuilderPage: React.FC = () => {
 
   return (
     <div className={styles.container}>
-      <header className={styles.header}>
-        <div className={styles.headerContent}>
-          <button className={styles.backButton} onClick={() => navigate('/')}>
-            ← Back
-          </button>
-          <div className={styles.headerActions}>
-            <button className={styles.saveButton} onClick={handleSave}>
-              Save Template
-            </button>
-          </div>
-        </div>
-      </header>
-
       <main className={styles.main}>
+        <div className={styles.toolBar}>
+          <button className={styles.saveButton} onClick={handleSave}>
+            Save Template
+          </button>
+        </div>
+
         <Card 
           className={styles.titleCard} 
           active={isTitleActive}
@@ -181,27 +188,13 @@ export const BuilderPage: React.FC = () => {
 
         <div className={styles.addFieldContainer}>
           <p className={styles.addFieldLabel}>Add New Question:</p>
-          <select 
+          <Select
             className={styles.typeSelectLarge}
-            onChange={(e) => {
-              if (e.target.value) {
-                addField(e.target.value as FieldType);
-                e.target.value = '';
-              }
-            }}
-            defaultValue=""
-          >
-            <option value="" disabled>Select field type...</option>
-            <option value="singleLineText">Short Text</option>
-            <option value="multiLineText">Long Text</option>
-            <option value="number">Number</option>
-            <option value="date">Date</option>
-            <option value="singleSelect">Multiple Choice (Radio)</option>
-            <option value="multiSelect">Checkboxes</option>
-            <option value="fileUpload">File Upload</option>
-            <option value="sectionHeader">Section Header</option>
-            <option value="calculation">Calculation</option>
-          </select>
+            options={FIELD_TYPE_OPTIONS}
+            value=""
+            onChange={(value) => addField(value as FieldType)}
+            placeholder="Select field type..."
+          />
         </div>
       </main>
     </div>

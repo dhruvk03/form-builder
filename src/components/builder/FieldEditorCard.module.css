@@ -221,12 +221,18 @@
   align-items: center;
 }
 
-.dependencyRow select, .dependencyRow input {
+.dependencyValueInput {
+  flex: 1;
   font-size: 13px;
-  padding: 8px;
+  padding: 12px 16px;
   border: 1px solid var(--color-border);
   border-radius: 4px;
-  flex: 1;
+  background-color: white;
+}
+
+.dependencyValueInput:focus {
+  outline: none;
+  border-color: var(--color-primary);
 }
 
 .deleteButtonSmall {
