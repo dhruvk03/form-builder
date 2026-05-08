@@ -32,9 +32,29 @@ export const BuilderPage: React.FC = () => {
   });
   const [activeFieldId, setActiveFieldId] = useState<string | null>(null);
   const [isTitleActive, setIsTitleActive] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   // Derived validation state
   const isTitleValid = template.title.trim().length > 0;
+
+  const validateTemplate = (): boolean => {
+    if (!isTitleValid) return false;
+    
+    for (const field of template.fields) {
+      if (!field.label.trim()) return false;
+      
+      if (field.type === 'singleSelect' || field.type === 'multiSelect') {
+        if (!field.options || field.options.length === 0) return false;
+        if (field.options.some(opt => !opt.trim())) return false;
+      }
+      
+      if (field.type === 'calculation') {
+        if (!field.sourceFieldIds || field.sourceFieldIds.length === 0) return false;
+      }
+    }
+    
+    return true;
+  };
 
   useEffect(() => {
     if (id) {
@@ -48,6 +68,7 @@ export const BuilderPage: React.FC = () => {
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTemplate((prev) => ({ ...prev, title: e.target.value }));
+    if (saveError) setSaveError(null);
   };
 
   const handleDescriptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -79,6 +100,7 @@ export const BuilderPage: React.FC = () => {
       ...prev,
       fields: prev.fields.map((f) => (f.id === updatedField.id ? updatedField : f)),
     }));
+    if (saveError) setSaveError(null);
   };
 
   const deleteField = (fieldId: string) => {
@@ -101,6 +123,12 @@ export const BuilderPage: React.FC = () => {
   };
 
   const handleSave = () => {
+    console.log('Save clicked');
+    if (!validateTemplate()) {
+      setSaveError('Please fill all required fields');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
     addTemplate(template);
     navigate('/');
   };
@@ -109,6 +137,7 @@ export const BuilderPage: React.FC = () => {
     <div className="layout-container">
       <main className={styles.main}>
         <div className={styles.toolBar}>
+          {saveError && <div className={styles.saveErrorMessage}>{saveError}</div>}
           <button 
             className={styles.saveButton} 
             onClick={handleSave}
