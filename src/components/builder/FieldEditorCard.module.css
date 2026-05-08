@@ -236,17 +236,18 @@
 .dependencyValueInput {
   flex: 1.2;
   font-size: 13px;
-  padding: 10px 12px;
-  border: 1px solid var(--color-border);
+  padding: 10px 4px;
+  border: 1px solid transparent;
   border-radius: 4px;
-  background-color: white;
+  background-color: transparent;
   min-height: 38px;
   transition: all 0.2s;
 }
 
 .dependencyValueInput:focus, .dependencyValueInput:focus-within {
   outline: none;
-  border-color: var(--color-primary);
+  border-bottom: 2px solid var(--color-primary);
+  border-radius: 0;
 }
 
 .deleteButtonSmall {

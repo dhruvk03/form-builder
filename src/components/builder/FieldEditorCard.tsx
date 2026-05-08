@@ -61,9 +61,9 @@ const getOperatorsForField = (type?: FieldType): { value: DependencyOperator; la
       ];
     case 'multiSelect':
       return [
-        { value: 'containsAny', label: 'Contains Any' },
-        { value: 'containsAll', label: 'Contains All' },
-        { value: 'containsNone', label: 'Contains None' },
+        { value: 'containsAny', label: 'Contains' },
+        { value: 'containsAll', label: 'All selected' },
+        { value: 'containsNone', label: 'Does not contain' },
       ];
     default:
       return [
@@ -470,23 +470,27 @@ export const FieldEditorCard: React.FC<FieldEditorCardProps> = ({
                     value={dep.operator}
                     onChange={(value) => updateDependency(index, { operator: value as DependencyOperator })}
                   />
-                  {dependentField && ('options' in dependentField) ? (
-                    <Select
-                      size="small"
-                      variant="borderless"
-                      className={styles.dependencyValueInput}
-                      options={dependentField.options.map(opt => ({ value: opt, label: opt }))}
-                      value={dep.value}
-                      onChange={(value) => updateDependency(index, { value })}
-                    />
-                  ) : (
-                    <input
-                      type="text"
-                      className={styles.dependencyValueInput}
-                      value={dep.value}
-                      onChange={(e) => updateDependency(index, { value: e.target.value })}
-                      placeholder="Value"
-                    />
+                  {dep.operator !== 'containsAll' && (
+                    <>
+                      {dependentField && ('options' in dependentField) ? (
+                        <Select
+                          size="small"
+                          variant="borderless"
+                          className={styles.dependencyValueInput}
+                          options={dependentField.options.map(opt => ({ value: opt, label: opt }))}
+                          value={dep.value}
+                          onChange={(value) => updateDependency(index, { value })}
+                        />
+                      ) : (
+                        <input
+                          type="text"
+                          className={styles.dependencyValueInput}
+                          value={dep.value}
+                          onChange={(e) => updateDependency(index, { value: e.target.value })}
+                          placeholder="Value"
+                        />
+                      )}
+                    </>
                   )}
                   <Select
                     size="small"
