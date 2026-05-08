@@ -68,12 +68,70 @@
   gap: 12px;
   font-size: 14px;
   cursor: pointer;
+  padding: 8px 0;
 }
 
-.optionItem input[type="radio"], .optionItem input[type="checkbox"] {
+.inputWrapper {
+  position: relative;
   width: 20px;
   height: 20px;
-  accent-color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.hiddenInput {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.customRadio, .customCheckbox {
+  height: 20px;
+  width: 20px;
+  background-color: white;
+  border: 2px solid #dadce0;
+  border-radius: 50%;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hiddenInput:checked ~ .customRadio,
+.hiddenInput:checked ~ .customCheckbox {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.customRadio::after, .customCheckbox::after {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: white;
+  transform: scale(0);
+  transition: transform 0.2s;
+}
+
+.hiddenInput:checked ~ .customRadio::after,
+.hiddenInput:checked ~ .customCheckbox::after {
+  transform: scale(1);
+}
+
+.hiddenInput:disabled ~ .customRadio,
+.hiddenInput:disabled ~ .customCheckbox {
+  background-color: #f8f9fa;
+  border-color: #e8eaed;
+  cursor: not-allowed;
+}
+
+.hiddenInput:disabled ~ .customRadio::after,
+.hiddenInput:disabled ~ .customCheckbox::after {
+  background-color: #dadce0;
 }
 
 .sectionHeader {

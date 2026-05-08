@@ -187,7 +187,7 @@ export const FieldEditorCard: React.FC<FieldEditorCardProps> = ({
             {options.map((option, index) => (
               <div key={index} className={styles.optionRow}>
                 <span className={styles.optionIcon}>
-                  {field.type === 'singleSelect' ? '○' : '□'}
+                  ●
                 </span>
                 <input
                   type="text"

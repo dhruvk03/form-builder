@@ -89,23 +89,27 @@ const SelectInput: React.FC<FieldRendererProps> = ({ field, value, onChange, err
       <div className={styles.optionList}>
         {field.options.map(opt => (
           <label key={opt} className={styles.optionItem}>
-            <input
-              type={field.type === 'singleSelect' ? 'radio' : 'checkbox'}
-              name={field.id}
-              checked={field.type === 'singleSelect' ? value === opt : (value || []).includes(opt)}
-              onChange={(e) => {
-                if (field.type === 'singleSelect') {
-                  onChange(opt);
-                } else {
-                  const current = value || [];
-                  const next = e.target.checked 
-                    ? [...current, opt] 
-                    : current.filter((v: string) => v !== opt);
-                  onChange(next);
-                }
-              }}
-              disabled={readOnly}
-            />
+            <div className={styles.inputWrapper}>
+              <input
+                type={field.type === 'singleSelect' ? 'radio' : 'checkbox'}
+                name={field.id}
+                checked={field.type === 'singleSelect' ? value === opt : (value || []).includes(opt)}
+                onChange={(e) => {
+                  if (field.type === 'singleSelect') {
+                    onChange(opt);
+                  } else {
+                    const current = value || [];
+                    const next = e.target.checked 
+                      ? [...current, opt] 
+                      : current.filter((v: string) => v !== opt);
+                    onChange(next);
+                  }
+                }}
+                disabled={readOnly}
+                className={styles.hiddenInput}
+              />
+              <span className={field.type === 'singleSelect' ? styles.customRadio : styles.customCheckbox}></span>
+            </div>
             {opt}
           </label>
         ))}
