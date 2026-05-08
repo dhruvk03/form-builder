@@ -20,11 +20,11 @@ export const Navbar: React.FC = () => {
             to="/builder" 
             className={({ isActive }) => `${styles.tab} ${isActive ? styles.active : ''}`}
           >
-            Builder
+            Build
           </NavLink>
           {isFillPage && (
             <div className={`${styles.tab} ${styles.active}`}>
-              Fill
+              {location.pathname.endsWith('/new') ? 'Fill' : 'View'}
             </div>
           )}
         </div>
