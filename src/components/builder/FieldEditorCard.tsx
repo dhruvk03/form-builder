@@ -80,16 +80,16 @@ export const FieldEditorCard: React.FC<FieldEditorCardProps> = ({
               <label>Min Length</label>
               <input
                 type="number"
-                value={field.minLength || ''}
-                onChange={(e) => handleChange({ minLength: parseInt(e.target.value) || undefined })}
+                value={field.minLength ?? ''}
+                onChange={(e) => handleChange({ minLength: e.target.value === '' ? undefined : parseInt(e.target.value, 10) })}
               />
             </div>
             <div className={styles.inputGroup}>
               <label>Max Length</label>
               <input
                 type="number"
-                value={field.maxLength || ''}
-                onChange={(e) => handleChange({ maxLength: parseInt(e.target.value) || undefined })}
+                value={field.maxLength ?? ''}
+                onChange={(e) => handleChange({ maxLength: e.target.value === '' ? undefined : parseInt(e.target.value, 10) })}
               />
             </div>
           </div>
@@ -102,16 +102,16 @@ export const FieldEditorCard: React.FC<FieldEditorCardProps> = ({
               <label>Min</label>
               <input
                 type="number"
-                value={field.min || ''}
-                onChange={(e) => handleChange({ min: parseFloat(e.target.value) || undefined })}
+                value={field.min ?? ''}
+                onChange={(e) => handleChange({ min: e.target.value === '' ? undefined : parseFloat(e.target.value) })}
               />
             </div>
             <div className={styles.inputGroup}>
               <label>Max</label>
               <input
                 type="number"
-                value={field.max || ''}
-                onChange={(e) => handleChange({ max: parseFloat(e.target.value) || undefined })}
+                value={field.max ?? ''}
+                onChange={(e) => handleChange({ max: e.target.value === '' ? undefined : parseFloat(e.target.value) })}
               />
             </div>
             <div className={styles.inputGroup}>
@@ -120,8 +120,30 @@ export const FieldEditorCard: React.FC<FieldEditorCardProps> = ({
                 type="number"
                 min="0"
                 max="4"
-                value={field.decimalPlaces || 0}
-                onChange={(e) => handleChange({ decimalPlaces: parseInt(e.target.value) || 0 })}
+                value={field.decimalPlaces ?? 0}
+                onChange={(e) => handleChange({ decimalPlaces: e.target.value === '' ? 0 : parseInt(e.target.value, 10) })}
+              />
+            </div>
+          </div>
+        );
+
+      case 'date':
+        return (
+          <div className={styles.configGrid}>
+            <div className={styles.inputGroup}>
+              <label>Min Date</label>
+              <input
+                type="date"
+                value={field.minDate || ''}
+                onChange={(e) => handleChange({ minDate: e.target.value || undefined })}
+              />
+            </div>
+            <div className={styles.inputGroup}>
+              <label>Max Date</label>
+              <input
+                type="date"
+                value={field.maxDate || ''}
+                onChange={(e) => handleChange({ maxDate: e.target.value || undefined })}
               />
             </div>
           </div>
@@ -164,7 +186,7 @@ export const FieldEditorCard: React.FC<FieldEditorCardProps> = ({
             ))}
             <button 
               className={styles.addOptionButton}
-              onClick={() => handleChange({ options: [...options, `Option ${options.length + 1}`] })}
+              onClick={() => handleChange({ options: [...options, ''] })}
             >
               + Add option
             </button>
@@ -182,6 +204,44 @@ export const FieldEditorCard: React.FC<FieldEditorCardProps> = ({
           </div>
         );
       
+      case 'fileUpload':
+        const allowedTypes = field.allowedFileTypes || [];
+        const ALL_EXTENSIONS = ['.pdf', '.doc', '.docx', '.jpg', '.png', '.png', '.zip', '.xlsx'];
+        
+        return (
+          <div className={styles.configGrid}>
+            <div className={styles.inputGroup}>
+              <label>Max Files</label>
+              <input
+                type="number"
+                min="1"
+                value={field.maxFiles ?? 1}
+                onChange={(e) => handleChange({ maxFiles: parseInt(e.target.value, 10) || 1 })}
+              />
+            </div>
+            <div className={styles.inputGroupFull}>
+              <label>Allowed Extensions</label>
+              <div className={styles.checkboxListHorizontal}>
+                {ALL_EXTENSIONS.map(ext => (
+                  <label key={ext} className={styles.checkboxItem}>
+                    <input
+                      type="checkbox"
+                      checked={allowedTypes.includes(ext)}
+                      onChange={(e) => {
+                        const next = e.target.checked
+                          ? [...allowedTypes, ext]
+                          : allowedTypes.filter(t => t !== ext);
+                        handleChange({ allowedFileTypes: next });
+                      }}
+                    />
+                    {ext}
+                  </label>
+                ))}
+              </div>
+            </div>
+          </div>
+        );
+
       case 'calculation':
         const otherFields = allFields.filter(f => f.id !== field.id && f.type === 'number');
         const sourceFieldIds = field.sourceFieldIds || [];
@@ -266,7 +326,7 @@ export const FieldEditorCard: React.FC<FieldEditorCardProps> = ({
             const updates: any = { type: newType };
             
             if ((newType === 'singleSelect' || newType === 'multiSelect') && !('options' in field)) {
-              updates.options = ['Option 1'];
+              updates.options = [''];
               updates.displayType = 'radio';
             }
             if (newType === 'calculation' && !('sourceFieldIds' in field)) {

@@ -116,9 +116,14 @@ export const FillPage: React.FC = () => {
     const newErrors: Record<string, string> = {};
     visibleFields.forEach(fieldId => {
       const field = template.fields.find(f => f.id === fieldId);
-      if (field && field.type !== 'calculation') {
+      if (field) {
+        // Skip validation only for section headers (they have no value)
+        if (field.type === 'sectionHeader') return;
+        
         const error = validateField(field, values[fieldId]);
-        if (error) newErrors[fieldId] = error;
+        if (error) {
+          newErrors[fieldId] = error;
+        }
       }
     });
 

@@ -62,7 +62,7 @@ export const BuilderPage: React.FC = () => {
       label: '',
       description: '',
       required: false,
-      ...(type === 'singleSelect' || type === 'multiSelect' ? { options: ['Option 1'], displayType: 'radio' } : {}),
+      ...(type === 'singleSelect' || type === 'multiSelect' ? { options: [''], displayType: 'radio' } : {}),
       ...(type === 'calculation' ? { sourceFieldIds: [], aggregationType: 'sum' } : {}),
     } as any;
 

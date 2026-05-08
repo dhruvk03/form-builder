@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import type { FormField } from '../../types/schema';
 import styles from './FormRenderer.module.css';
 
@@ -137,34 +137,82 @@ const DateInput: React.FC<FieldRendererProps> = ({ field, value, onChange, error
 };
 
 const FileUpload: React.FC<FieldRendererProps> = ({ field, value, onChange, error, required, readOnly }) => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
   if (field.type !== 'fileUpload') return null;
   
+  const files = value || [];
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFiles = Array.from(e.target.files || []).map(f => ({
+      name: f.name,
+      size: f.size,
+      type: f.type
+    }));
+    onChange(selectedFiles);
+  };
+
+  const handleButtonClick = () => {
+    fileInputRef.current?.click();
+  };
+
   return (
     <div className={styles.fieldContainer}>
       <label className={styles.label}>
         {field.label} {required && <span className={styles.required}>*</span>}
       </label>
       {field.description && <p className={styles.description}>{field.description}</p>}
+      
       {readOnly ? (
         <div className={styles.fileList}>
-          {(value || []).map((f: any, i: number) => (
+          {files.map((f: any, i: number) => (
             <div key={i} className={styles.fileItem}>{f.name}</div>
           ))}
-          {(value || []).length === 0 && <p className={styles.noValue}>No files uploaded</p>}
+          {files.length === 0 && <p className={styles.noValue}>No files uploaded</p>}
         </div>
       ) : (
-        <input
-          type="file"
-          multiple={field.maxFiles ? field.maxFiles > 1 : true}
-          onChange={(e) => {
-            const files = Array.from(e.target.files || []).map(f => ({
-              name: f.name,
-              size: f.size,
-              type: f.type
-            }));
-            onChange(files);
-          }}
-        />
+        <div className={styles.fileUploadContainer}>
+          <input
+            type="file"
+            ref={fileInputRef}
+            className={styles.hiddenFileInput}
+            multiple={(field.maxFiles || 1) > 1}
+            accept={field.allowedFileTypes?.length ? field.allowedFileTypes.join(',') : undefined}
+            onChange={handleFileChange}
+          />
+          <button 
+            type="button"
+            className={styles.uploadButton}
+            onClick={handleButtonClick}
+          >
+            <span className={styles.uploadIcon}>↑</span>
+            {files.length > 0 ? 'Change Files' : 'Add File'}
+          </button>
+          
+          {files.length > 0 && (
+            <div className={styles.fileList}>
+              {files.map((f: any, i: number) => (
+                <div key={i} className={styles.fileItemPreview}>
+                  <span className={styles.fileName}>{f.name}</span>
+                  <button 
+                    type="button" 
+                    className={styles.removeFile}
+                    onClick={() => {
+                      const next = files.filter((_: any, index: number) => index !== i);
+                      onChange(next);
+                    }}
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+          
+          <p className={styles.uploadLimit}>
+            {field.maxFiles ? `Max ${field.maxFiles} files` : 'Single file'}
+            {field.allowedFileTypes?.length ? ` (${field.allowedFileTypes.join(', ')})` : ''}
+          </p>
+        </div>
       )}
       {error && <div className={styles.error}>{error}</div>}
     </div>
