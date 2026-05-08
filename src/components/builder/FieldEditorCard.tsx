@@ -62,6 +62,35 @@ export const FieldEditorCard: React.FC<FieldEditorCardProps> = ({
     onUpdate({ ...field, ...updates } as FormField);
   };
 
+  const getValidationError = () => {
+    switch (field.type) {
+      case 'singleLineText':
+      case 'multiLineText':
+        if (field.minLength !== undefined && field.maxLength !== undefined && field.maxLength < field.minLength) {
+          return 'Max length cannot be less than min length';
+        }
+        break;
+      case 'number':
+        if (field.min !== undefined && field.max !== undefined && field.max < field.min) {
+          return 'Max value cannot be less than min value';
+        }
+        break;
+      case 'date':
+        if (field.minDate && field.maxDate && new Date(field.maxDate) < new Date(field.minDate)) {
+          return 'Max date cannot be before min date';
+        }
+        break;
+      case 'multiSelect':
+        if (field.minSelections !== undefined && field.maxSelections !== undefined && field.maxSelections < field.minSelections) {
+          return 'Max selections cannot be less than min selections';
+        }
+        break;
+    }
+    return null;
+  };
+
+  const validationError = getValidationError();
+
   const renderConfig = () => {
     switch (field.type) {
       case 'singleLineText':
@@ -150,7 +179,7 @@ export const FieldEditorCard: React.FC<FieldEditorCardProps> = ({
         );
 
       case 'singleSelect':
-      case 'multiSelect':
+      case 'multiSelect': {
         const options = field.options || [];
         return (
           <div className={styles.optionsSection}>
@@ -191,20 +220,45 @@ export const FieldEditorCard: React.FC<FieldEditorCardProps> = ({
               + Add option
             </button>
             
-            {field.type === 'singleSelect' && (
-              <div className={styles.inputGroup} style={{ marginTop: '16px' }}>
-                <label>Display Type</label>
-                <Select
-                  options={DISPLAY_TYPE_OPTIONS}
-                  value={field.displayType}
-                  onChange={(value) => handleChange({ displayType: value as any })}
-                />
-              </div>
-            )}
+            <div className={styles.configGrid} style={{ marginTop: '16px' }}>
+              {field.type === 'singleSelect' && (
+                <div className={styles.inputGroup}>
+                  <label>Display Type</label>
+                  <Select
+                    options={DISPLAY_TYPE_OPTIONS}
+                    value={field.displayType}
+                    onChange={(value) => handleChange({ displayType: value as any })}
+                  />
+                </div>
+              )}
+              {field.type === 'multiSelect' && (
+                <>
+                  <div className={styles.inputGroup}>
+                    <label>Min Selections</label>
+                    <input
+                      type="number"
+                      min="0"
+                      value={field.minSelections ?? ''}
+                      onChange={(e) => handleChange({ minSelections: e.target.value === '' ? undefined : parseInt(e.target.value, 10) })}
+                    />
+                  </div>
+                  <div className={styles.inputGroup}>
+                    <label>Max Selections</label>
+                    <input
+                      type="number"
+                      min="1"
+                      value={field.maxSelections ?? ''}
+                      onChange={(e) => handleChange({ maxSelections: e.target.value === '' ? undefined : parseInt(e.target.value, 10) })}
+                    />
+                  </div>
+                </>
+              )}
+            </div>
           </div>
         );
+      }
       
-      case 'fileUpload':
+      case 'fileUpload': {
         const allowedTypes = field.allowedFileTypes || [];
         const ALL_EXTENSIONS = ['.pdf', '.doc', '.docx', '.jpg', '.png', '.png', '.zip', '.xlsx'];
         
@@ -241,8 +295,9 @@ export const FieldEditorCard: React.FC<FieldEditorCardProps> = ({
             </div>
           </div>
         );
+      }
 
-      case 'calculation':
+      case 'calculation': {
         const otherFields = allFields.filter(f => f.id !== field.id && f.type === 'number');
         const sourceFieldIds = field.sourceFieldIds || [];
         return (
@@ -277,6 +332,7 @@ export const FieldEditorCard: React.FC<FieldEditorCardProps> = ({
             </div>
           </div>
         );
+      }
 
       default:
         return null;
@@ -341,6 +397,7 @@ export const FieldEditorCard: React.FC<FieldEditorCardProps> = ({
 
       <div className={styles.content}>
         {renderConfig()}
+        {validationError && <div className={styles.error}>{validationError}</div>}
 
         {allFields.length > 1 && (
           <div className={styles.dependenciesSection}>
