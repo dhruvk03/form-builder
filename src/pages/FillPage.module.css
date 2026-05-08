@@ -98,6 +98,8 @@
   .main {
     max-width: 100%;
     padding: 0;
+    height: auto !important;
+    min-height: auto !important;
   }
   .headerCard {
     border: none;

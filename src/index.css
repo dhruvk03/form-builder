@@ -65,12 +65,28 @@ input, textarea, select {
 }
 
 @media print {
+  @page {
+    margin: 0;
+  }
+
+  body, #root {
+    min-height: auto !important;
+    height: auto !important;
+  }
+
   body {
     background-color: white;
+    margin: 1.6cm;
   }
   
   .no-print {
     display: none !important;
+  }
+
+  .layout-container {
+    max-width: 100%;
+    padding: 0;
+    margin: 0;
   }
 
   .print-only {

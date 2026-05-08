@@ -123,10 +123,6 @@
   font-weight: 500;
 }
 
-.pdfLink {
-  color: var(--color-text-secondary);
-}
-
 .viewLink:hover, .pdfLink:hover {
   text-decoration: underline;
 }
