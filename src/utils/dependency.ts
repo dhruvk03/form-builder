@@ -32,27 +32,57 @@ export const evaluateFieldState = (
 };
 
 const checkDependency = (dep: Dependency, value: any): boolean => {
+  const targetValue = dep.value;
+  const isEmpty = value === undefined || value === null || value === '';
+
   switch (dep.operator) {
     case 'equals':
-      return value === dep.value;
+      return !isEmpty && String(value) === String(targetValue);
     case 'notEquals':
-      return value !== dep.value;
+      return String(value) !== String(targetValue);
     case 'contains':
-      return Array.isArray(value) ? value.includes(dep.value) : String(value).includes(String(dep.value));
+      if (isEmpty) return false;
+      if (Array.isArray(value)) {
+        return value.includes(targetValue);
+      }
+      return String(value).toLowerCase().includes(String(targetValue).toLowerCase());
     case 'greaterThan':
-      return Number(value) > Number(dep.value);
+      return !isEmpty && Number(value) > Number(targetValue);
     case 'lessThan':
-      return Number(value) < Number(dep.value);
-    case 'withinRange':
-      if (Array.isArray(dep.value) && dep.value.length === 2) {
+      return !isEmpty && Number(value) < Number(targetValue);
+    case 'withinRange': {
+      if (isEmpty) return false;
+      const rangeArr = Array.isArray(targetValue) 
+        ? targetValue 
+        : String(targetValue).split(',').map(s => s.trim());
+      if (rangeArr.length === 2) {
         const val = Number(value);
-        return val >= Number(dep.value[0]) && val <= Number(dep.value[1]);
+        return val >= Number(rangeArr[0]) && val <= Number(rangeArr[1]);
       }
       return false;
+    }
+    case 'containsAny': {
+      if (isEmpty) return false;
+      const valArr = Array.isArray(value) ? value : [value];
+      const targetArr = String(targetValue).split(',').map(s => s.trim());
+      return targetArr.some(t => valArr.includes(t));
+    }
+    case 'containsAll': {
+      if (isEmpty) return false;
+      const valArr = Array.isArray(value) ? value : [value];
+      const targetArr = String(targetValue).split(',').map(s => s.trim());
+      return targetArr.every(t => valArr.includes(t));
+    }
+    case 'containsNone': {
+      if (isEmpty) return true;
+      const valArr = Array.isArray(value) ? value : [value];
+      const targetArr = String(targetValue).split(',').map(s => s.trim());
+      return !targetArr.some(t => valArr.includes(t));
+    }
     case 'before':
-      return new Date(value) < new Date(dep.value);
+      return !isEmpty && new Date(value) < new Date(targetValue);
     case 'after':
-      return new Date(value) > new Date(dep.value);
+      return !isEmpty && new Date(value) > new Date(targetValue);
     default:
       return false;
   }

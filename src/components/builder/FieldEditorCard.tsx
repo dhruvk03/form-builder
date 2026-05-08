@@ -29,12 +29,49 @@ const AGGREGATION_OPTIONS = [
   { value: 'maximum', label: 'Maximum' },
 ];
 
-const OPERATOR_OPTIONS = [
-  { value: 'equals', label: 'Equals' },
-  { value: 'notEquals', label: 'Not Equals' },
-  { value: 'greaterThan', label: 'Greater Than' },
-  { value: 'lessThan', label: 'Less Than' },
-];
+const getOperatorsForField = (type?: FieldType): { value: DependencyOperator; label: string }[] => {
+  switch (type) {
+    case 'singleLineText':
+    case 'multiLineText':
+      return [
+        { value: 'equals', label: 'Equals' },
+        { value: 'notEquals', label: 'Not Equals' },
+        { value: 'contains', label: 'Contains' },
+      ];
+    case 'number':
+    case 'calculation':
+      return [
+        { value: 'equals', label: 'Equals' },
+        { value: 'notEquals', label: 'Not Equals' },
+        { value: 'greaterThan', label: 'Greater Than' },
+        { value: 'lessThan', label: 'Less Than' },
+        { value: 'withinRange', label: 'Within Range' },
+      ];
+    case 'date':
+      return [
+        { value: 'equals', label: 'Equals' },
+        { value: 'notEquals', label: 'Not Equals' },
+        { value: 'before', label: 'Before' },
+        { value: 'after', label: 'After' },
+      ];
+    case 'singleSelect':
+      return [
+        { value: 'equals', label: 'Equals' },
+        { value: 'notEquals', label: 'Not Equals' },
+      ];
+    case 'multiSelect':
+      return [
+        { value: 'containsAny', label: 'Contains Any' },
+        { value: 'containsAll', label: 'Contains All' },
+        { value: 'containsNone', label: 'Contains None' },
+      ];
+    default:
+      return [
+        { value: 'equals', label: 'Equals' },
+        { value: 'notEquals', label: 'Not Equals' },
+      ];
+  }
+};
 
 const ACTION_OPTIONS = [
   { value: 'show', label: 'Show' },
@@ -411,35 +448,57 @@ export const FieldEditorCard: React.FC<FieldEditorCardProps> = ({
                 + Add Dependency
               </button>
             </div>
-            {field.dependencies?.map((dep, index) => (
-              <div key={index} className={styles.dependencyRow}>
-                <Select
-                  options={allFields
-                    .filter(f => f.id !== field.id)
-                    .map(f => ({ value: f.id, label: f.label }))}
-                  value={dep.fieldId}
-                  onChange={(value) => updateDependency(index, { fieldId: value })}
-                />
-                <Select
-                  options={OPERATOR_OPTIONS}
-                  value={dep.operator}
-                  onChange={(value) => updateDependency(index, { operator: value as DependencyOperator })}
-                />
-                <input
-                  type="text"
-                  className={styles.dependencyValueInput}
-                  value={dep.value}
-                  onChange={(e) => updateDependency(index, { value: e.target.value })}
-                  placeholder="Value"
-                />
-                <Select
-                  options={ACTION_OPTIONS}
-                  value={dep.action}
-                  onChange={(value) => updateDependency(index, { action: value as DependencyAction })}
-                />
-                <button onClick={() => removeDependency(index)} className={styles.deleteButtonSmall}>×</button>
-              </div>
-            ))}
+            {field.dependencies?.map((dep, index) => {
+              const dependentField = allFields.find(f => f.id === dep.fieldId);
+              const operatorOptions = getOperatorsForField(dependentField?.type);
+              
+              return (
+                <div key={index} className={styles.dependencyRow}>
+                  <Select
+                    size="small"
+                    variant="borderless"
+                    options={allFields
+                      .filter(f => f.id !== field.id)
+                      .map(f => ({ value: f.id, label: f.label }))}
+                    value={dep.fieldId}
+                    onChange={(value) => updateDependency(index, { fieldId: value, operator: 'equals', value: '' })}
+                  />
+                  <Select
+                    size="small"
+                    variant="borderless"
+                    options={operatorOptions}
+                    value={dep.operator}
+                    onChange={(value) => updateDependency(index, { operator: value as DependencyOperator })}
+                  />
+                  {dependentField && ('options' in dependentField) ? (
+                    <Select
+                      size="small"
+                      variant="borderless"
+                      className={styles.dependencyValueInput}
+                      options={dependentField.options.map(opt => ({ value: opt, label: opt }))}
+                      value={dep.value}
+                      onChange={(value) => updateDependency(index, { value })}
+                    />
+                  ) : (
+                    <input
+                      type="text"
+                      className={styles.dependencyValueInput}
+                      value={dep.value}
+                      onChange={(e) => updateDependency(index, { value: e.target.value })}
+                      placeholder="Value"
+                    />
+                  )}
+                  <Select
+                    size="small"
+                    variant="borderless"
+                    options={ACTION_OPTIONS}
+                    value={dep.action}
+                    onChange={(value) => updateDependency(index, { action: value as DependencyAction })}
+                  />
+                  <button onClick={() => removeDependency(index)} className={styles.deleteButtonSmall}>×</button>
+                </div>
+              );
+            })}
           </div>
         )}
       </div>

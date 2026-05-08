@@ -13,6 +13,8 @@ interface SelectProps {
   onChange: (value: string) => void;
   placeholder?: string;
   className?: string;
+  size?: 'small' | 'medium';
+  variant?: 'default' | 'borderless';
 }
 
 export const Select: React.FC<SelectProps> = ({
@@ -21,6 +23,8 @@ export const Select: React.FC<SelectProps> = ({
   onChange,
   placeholder = 'Select an option',
   className,
+  size = 'medium',
+  variant = 'default',
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -38,7 +42,10 @@ export const Select: React.FC<SelectProps> = ({
   }, []);
 
   return (
-    <div className={`${styles.container} ${className || ''}`} ref={containerRef}>
+    <div 
+      className={`${styles.container} ${className || ''} ${styles[size]} ${styles[variant]}`} 
+      ref={containerRef}
+    >
       <div 
         className={`${styles.trigger} ${isOpen ? styles.triggerActive : ''}`}
         onClick={() => setIsOpen(!isOpen)}
