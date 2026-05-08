@@ -57,7 +57,7 @@ export const FillPage: React.FC = () => {
 
     // First pass: dependencies and simple visibility
     template.fields.forEach(field => {
-      const { visible: isVisible, required: isReq } = evaluateFieldState(field, values);
+      const { visible: isVisible, required: isReq } = evaluateFieldState(field, values, template.fields);
       if (isVisible) {
         visible.add(field.id);
         if (isReq) required.add(field.id);

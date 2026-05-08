@@ -2,7 +2,8 @@ import type { FormField, Dependency } from '../types/schema';
 
 export const evaluateFieldState = (
   field: FormField,
-  values: Record<string, any>
+  values: Record<string, any>,
+  allFields: FormField[]
 ): { visible: boolean; required: boolean } => {
   let visible = true;
   let required = field.required || false;
@@ -13,7 +14,7 @@ export const evaluateFieldState = (
 
   for (const dep of field.dependencies) {
     const dependentValue = values[dep.fieldId];
-    const isSatisfied = checkDependency(dep, dependentValue);
+    const isSatisfied = checkDependency(dep, dependentValue, allFields);
 
     if (isSatisfied) {
       if (dep.action === 'show') visible = true;
@@ -31,9 +32,9 @@ export const evaluateFieldState = (
   return { visible, required };
 };
 
-const checkDependency = (dep: Dependency, value: any): boolean => {
+const checkDependency = (dep: Dependency, value: any, allFields: FormField[]): boolean => {
   const targetValue = dep.value;
-  const isEmpty = value === undefined || value === null || value === '';
+  const isEmpty = value === undefined || value === null || value === '' || (Array.isArray(value) && value.length === 0);
 
   switch (dep.operator) {
     case 'equals':
@@ -70,11 +71,20 @@ const checkDependency = (dep: Dependency, value: any): boolean => {
     case 'containsAll': {
       if (isEmpty) return false;
       const valArr = Array.isArray(value) ? value : [value];
+      
+      // If targetValue is empty, it means "All selected" (check against all options)
+      if (!targetValue || targetValue === '') {
+        const sourceField = allFields.find(f => f.id === dep.fieldId);
+        if (sourceField && 'options' in sourceField) {
+          return sourceField.options.every(opt => valArr.includes(opt));
+        }
+      }
+
       const targetArr = String(targetValue).split(',').map(s => s.trim());
       return targetArr.every(t => valArr.includes(t));
     }
     case 'containsNone': {
-      if (isEmpty) return true;
+      if (isEmpty) return false; // Don't trigger hide/show if nothing is selected
       const valArr = Array.isArray(value) ? value : [value];
       const targetArr = String(targetValue).split(',').map(s => s.trim());
       return !targetArr.some(t => valArr.includes(t));
