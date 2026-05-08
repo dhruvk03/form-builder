@@ -94,11 +94,18 @@
   width: 20px;
   background-color: white;
   border: 2px solid #dadce0;
-  border-radius: 50%;
   transition: all 0.2s;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.customRadio {
+  border-radius: 50%;
+}
+
+.customCheckbox {
+  border-radius: 3px;
 }
 
 .hiddenInput:checked ~ .customRadio,
@@ -107,7 +114,7 @@
   border-color: var(--color-primary);
 }
 
-.customRadio::after, .customCheckbox::after {
+.customRadio::after {
   content: "";
   width: 8px;
   height: 8px;
@@ -117,9 +124,23 @@
   transition: transform 0.2s;
 }
 
-.hiddenInput:checked ~ .customRadio::after,
-.hiddenInput:checked ~ .customCheckbox::after {
+.customCheckbox::after {
+  content: "";
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg) scale(0);
+  transition: transform 0.2s;
+  margin-bottom: 2px;
+}
+
+.hiddenInput:checked ~ .customRadio::after {
   transform: scale(1);
+}
+
+.hiddenInput:checked ~ .customCheckbox::after {
+  transform: rotate(45deg) scale(1);
 }
 
 .hiddenInput:disabled ~ .customRadio,
@@ -129,9 +150,12 @@
   cursor: not-allowed;
 }
 
-.hiddenInput:disabled ~ .customRadio::after,
-.hiddenInput:disabled ~ .customCheckbox::after {
+.hiddenInput:disabled ~ .customRadio::after {
   background-color: #dadce0;
+}
+
+.hiddenInput:disabled ~ .customCheckbox::after {
+  border-color: #dadce0;
 }
 
 .sectionHeader {
