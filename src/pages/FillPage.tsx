@@ -85,7 +85,7 @@ export const FillPage: React.FC = () => {
       }
     });
 
-    return { visibleFields: visible, requiredFields: required, calculatedValues: calculated };
+        return { visibleFields: visible, requiredFields: required, calculatedValues: calculated };
   }, [template, values]);
 
   const handleValueChange = (fieldId: string, value: any) => {

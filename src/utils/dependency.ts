@@ -37,9 +37,9 @@ const checkDependency = (dep: Dependency, value: any): boolean => {
 
   switch (dep.operator) {
     case 'equals':
-      return !isEmpty && String(value) === String(targetValue);
+      return String(value || '') === String(targetValue || '');
     case 'notEquals':
-      return String(value) !== String(targetValue);
+      return String(value || '') !== String(targetValue || '');
     case 'contains':
       if (isEmpty) return false;
       if (Array.isArray(value)) {
