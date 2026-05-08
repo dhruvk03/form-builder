@@ -176,7 +176,7 @@ export const BuilderPage: React.FC = () => {
         </div>
 
         <div className={styles.addFieldContainer}>
-          <p className={styles.addFieldLabel}>Add New Question:</p>
+          <p className={styles.addFieldLabel}>Add New Question</p>
           <Select
             className={styles.typeSelectLarge}
             options={FIELD_TYPE_OPTIONS}

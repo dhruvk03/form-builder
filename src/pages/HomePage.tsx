@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import type { FormTemplate, FormResponse } from '../types/schema';
-import { loadTemplates, loadResponses } from '../utils/storage';
+import { loadTemplates, loadResponses, deleteTemplate } from '../utils/storage';
 import { Card } from '../components/common/Card';
 import styles from './HomePage.module.css';
 
@@ -10,10 +10,21 @@ export const HomePage: React.FC = () => {
   const [responses, setResponses] = useState<FormResponse[]>([]);
   const navigate = useNavigate();
 
-  useEffect(() => {
+  const refreshData = () => {
     setTemplates(loadTemplates());
     setResponses(loadResponses());
+  };
+
+  useEffect(() => {
+    refreshData();
   }, []);
+
+  const handleDeleteTemplate = (id: string, title: string) => {
+    if (window.confirm(`Are you sure you want to delete the template "${title}"? This will also delete all its responses.`)) {
+      deleteTemplate(id);
+      refreshData();
+    }
+  };
 
   const getResponsesForTemplate = (templateId: string) => {
     return responses.filter((r) => r.templateId === templateId);
@@ -45,6 +56,12 @@ export const HomePage: React.FC = () => {
                 </div>
                 
                 <div className={styles.actions}>
+                  <button 
+                    onClick={() => handleDeleteTemplate(template.id, template.title)}
+                    className={styles.deleteButton}
+                  >
+                    Delete
+                  </button>
                   <Link to={`/builder/${template.id}`} className={styles.actionLink}>
                     Edit Template
                   </Link>

@@ -77,6 +77,23 @@
   border: 1px solid var(--color-border);
 }
 
+.deleteButton {
+  background: none;
+  border: 1px solid var(--color-border);
+  color: var(--color-error);
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.deleteButton:hover {
+  background-color: #fff5f5;
+  border-color: var(--color-error);
+}
+
 .primaryActionLink {
   background-color: var(--color-primary-light);
   color: var(--color-primary);
