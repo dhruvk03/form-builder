@@ -6,12 +6,13 @@ import { generateId } from '../utils/id';
 import { Card } from '../components/common/Card';
 import { FieldEditorCard } from '../components/builder/FieldEditorCard';
 import { Select, type Option } from '../components/common/Select';
-import { UI_STRINGS, CONFIG, FIELD_TYPES, DISPLAY_TYPES, AGGREGATION_TYPES } from '../constants';
+import { UI_STRINGS, CONFIG, FIELD_TYPES } from '../constants';
+import { FieldRegistry } from '../fields';
 import styles from './BuilderPage.module.css';
 
-const FIELD_TYPE_OPTIONS: Option[] = Object.values(FIELD_TYPES).map(type => ({
-  value: type,
-  label: UI_STRINGS.FIELD_TYPE_LABELS[type]
+const FIELD_TYPE_OPTIONS: Option[] = FieldRegistry.getAllPlugins().map(plugin => ({
+  value: plugin.type,
+  label: plugin.label
 }));
 
 export const BuilderPage: React.FC = () => {
@@ -36,13 +37,10 @@ export const BuilderPage: React.FC = () => {
     for (const field of template.fields) {
       if (!field.label.trim()) return false;
       
-      if (field.type === FIELD_TYPES.SINGLE_SELECT || field.type === FIELD_TYPES.MULTI_SELECT) {
-        if (!field.options || field.options.length === 0) return false;
-        if (field.options.some(opt => !opt.trim())) return false;
-      }
-      
-      if (field.type === FIELD_TYPES.CALCULATION) {
-        if (!field.sourceFieldIds || field.sourceFieldIds.length === 0) return false;
+      const plugin = FieldRegistry.getPlugin(field.type);
+      if (plugin?.validateConfig) {
+        const error = plugin.validateConfig(field);
+        if (error) return false;
       }
     }
     
@@ -69,16 +67,11 @@ export const BuilderPage: React.FC = () => {
   };
 
   const addField = (type: FieldType) => {
+    const plugin = FieldRegistry.getPlugin(type);
+    if (!plugin) return;
+
     const newId = generateId(CONFIG.FIELD_ID_PREFIX);
-    const newField: FormField = {
-      id: newId,
-      type,
-      label: '',
-      description: '',
-      required: false,
-      ...(type === FIELD_TYPES.SINGLE_SELECT || type === FIELD_TYPES.MULTI_SELECT ? { options: [''], displayType: DISPLAY_TYPES.RADIO } : {}),
-      ...(type === FIELD_TYPES.CALCULATION ? { sourceFieldIds: [], aggregationType: AGGREGATION_TYPES.SUM } : {}),
-    } as any;
+    const newField = plugin.defaultState(newId);
 
     setTemplate((prev) => ({
       ...prev,
