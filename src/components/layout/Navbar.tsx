@@ -2,6 +2,8 @@ import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import styles from './Navbar.module.css';
 
+import { UI_STRINGS } from '../../constants';
+
 export const Navbar: React.FC = () => {
   const location = useLocation();
   const isFillPage = location.pathname.startsWith('/fill');
@@ -24,7 +26,7 @@ export const Navbar: React.FC = () => {
           </NavLink>
           {isFillPage && (
             <div className={`${styles.tab} ${styles.active}`}>
-              {location.pathname.endsWith('/new') ? 'Fill' : 'View'}
+              {location.pathname.endsWith('/new') ? UI_STRINGS.FILL : UI_STRINGS.VIEW}
             </div>
           )}
         </div>

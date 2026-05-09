@@ -1,13 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import styles from './Select.module.css';
 
-interface Option {
+export interface Option {
   value: string;
   label: string;
   icon?: React.ReactNode;
 }
 
-interface SelectProps {
+export interface SelectProps {
   options: Option[];
   value: string;
   onChange: (value: string) => void;

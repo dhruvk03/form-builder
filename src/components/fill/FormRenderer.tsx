@@ -1,5 +1,6 @@
 import React, { useRef } from 'react';
 import type { FormField } from '../../types/schema';
+import { CONFIG } from '../../constants';
 import styles from './FormRenderer.module.css';
 
 interface FieldRendererProps {
@@ -25,10 +26,10 @@ const TextInput: React.FC<FieldRendererProps> = ({ field, value, onChange, error
       <InputComponent
         className={styles.input}
         value={value || ''}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => onChange(e.target.value)}
         placeholder={readOnly ? '' : field.placeholder}
         disabled={readOnly}
-        rows={field.type === 'multiLineText' ? field.rows || 3 : undefined}
+        rows={field.type === 'multiLineText' ? field.rows || CONFIG.DEFAULT_ROWS : undefined}
       />
       {error && <div className={styles.error}>{error}</div>}
     </div>
@@ -48,7 +49,7 @@ const NumberInput: React.FC<FieldRendererProps> = ({ field, value, onChange, err
         type="number"
         className={styles.input}
         value={value ?? ''}
-        onChange={(e) => onChange(e.target.value === '' ? undefined : Number(e.target.value))}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange(e.target.value === '' ? undefined : Number(e.target.value))}
         disabled={readOnly}
       />
       {error && <div className={styles.error}>{error}</div>}
@@ -69,7 +70,7 @@ const SelectInput: React.FC<FieldRendererProps> = ({ field, value, onChange, err
         <select
           className={styles.select}
           value={value || ''}
-          onChange={(e) => onChange(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLSelectElement>) => onChange(e.target.value)}
           disabled={readOnly}
         >
           <option value="">Select an option</option>
@@ -94,7 +95,7 @@ const SelectInput: React.FC<FieldRendererProps> = ({ field, value, onChange, err
                 type={field.type === 'singleSelect' ? 'radio' : 'checkbox'}
                 name={field.id}
                 checked={field.type === 'singleSelect' ? value === opt : (value || []).includes(opt)}
-                onChange={(e) => {
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   if (field.type === 'singleSelect') {
                     onChange(opt);
                   } else {
@@ -132,7 +133,7 @@ const DateInput: React.FC<FieldRendererProps> = ({ field, value, onChange, error
         type="date"
         className={styles.input}
         value={value || ''}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange(e.target.value)}
         disabled={readOnly}
       />
       {error && <div className={styles.error}>{error}</div>}

@@ -8,6 +8,7 @@ import { evaluateFieldState } from '../utils/dependency';
 import { FormRenderer } from '../components/fill/FormRenderer';
 import { Card } from '../components/common/Card';
 import styles from './FillPage.module.css';
+import { UI_STRINGS, CONFIG } from '../constants';
 
 export const FillPage: React.FC = () => {
   const { templateId, responseId } = useParams<{ templateId: string; responseId?: string }>();
@@ -24,7 +25,7 @@ export const FillPage: React.FC = () => {
     if (params.get('print') === 'true' && template && isReadOnly) {
       setTimeout(() => {
         window.print();
-      }, 500);
+      }, CONFIG.PRINT_DELAY);
     }
   }, [template, isReadOnly]);
 
@@ -80,7 +81,7 @@ export const FillPage: React.FC = () => {
             case 'minimum': result = Math.min(...sourceValues); break;
             case 'maximum': result = Math.max(...sourceValues); break;
           }
-          calculated[field.id] = Number(result.toFixed(field.decimalPlaces || 0));
+          calculated[field.id] = Number(result.toFixed(field.decimalPlaces || CONFIG.DEFAULT_DECIMAL_PLACES));
         }
       }
     });
@@ -141,7 +142,7 @@ export const FillPage: React.FC = () => {
     });
 
     const response: FormResponse = {
-      id: generateId('res'),
+      id: generateId(CONFIG.RESPONSE_ID_PREFIX),
       templateId: template.id,
       submittedAt: new Date().toISOString(),
       values: { ...submittedValues, ...calculatedValues }
@@ -157,10 +158,10 @@ export const FillPage: React.FC = () => {
     window.print();
     setTimeout(() => {
       document.title = originalTitle;
-    }, 100);
+    }, CONFIG.TITLE_RESTORE_DELAY);
   };
 
-  if (!template) return <div>Loading...</div>;
+  if (!template) return <div>{UI_STRINGS.LOADING}</div>;
   return (
     <div className="layout-container">
       <main className={styles.main}>
@@ -170,7 +171,7 @@ export const FillPage: React.FC = () => {
             <h1 className={styles.title}>{template.title}</h1>
             {isReadOnly && (
               <button className={`${styles.printButton} no-print`} onClick={handlePrint}>
-                Download PDF
+                {UI_STRINGS.DOWNLOAD_PDF}
               </button>
             )}
           </div>
@@ -179,7 +180,7 @@ export const FillPage: React.FC = () => {
           )}
           {submittedAt && (
             <p className={`${styles.submissionInfo} no-print`}>
-              Submitted on {new Date(submittedAt).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}
+              {UI_STRINGS.SUBMITTED_ON} {new Date(submittedAt).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}
             </p>
           )}
         </Card>
@@ -198,7 +199,7 @@ export const FillPage: React.FC = () => {
           {!isReadOnly && (
             <div className={`${styles.footer} no-print`}>
               <button type="submit" className={styles.submitButton}>
-                Submit
+                {UI_STRINGS.SUBMIT}
               </button>
             </div>
           )}

@@ -5,11 +5,11 @@ import { loadTemplates, addTemplate } from '../utils/storage';
 import { generateId } from '../utils/id';
 import { Card } from '../components/common/Card';
 import { FieldEditorCard } from '../components/builder/FieldEditorCard';
+import { Select, type Option } from '../components/common/Select';
+import { UI_STRINGS, CONFIG } from '../constants';
 import styles from './BuilderPage.module.css';
 
-import { Select } from '../components/common/Select';
-
-const FIELD_TYPE_OPTIONS = [
+const FIELD_TYPE_OPTIONS: Option[] = [
   { value: 'singleLineText', label: 'Short Text' },
   { value: 'multiLineText', label: 'Long Text' },
   { value: 'number', label: 'Number' },
@@ -25,7 +25,7 @@ export const BuilderPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [template, setTemplate] = useState<FormTemplate>({
-    id: id || generateId('tpl'),
+    id: id || generateId(CONFIG.TEMPLATE_ID_PREFIX),
     title: '',
     description: '',
     fields: [],
@@ -76,7 +76,7 @@ export const BuilderPage: React.FC = () => {
   };
 
   const addField = (type: FieldType) => {
-    const newId = generateId('fld');
+    const newId = generateId(CONFIG.FIELD_ID_PREFIX);
     const newField: FormField = {
       id: newId,
       type,
@@ -125,7 +125,7 @@ export const BuilderPage: React.FC = () => {
   const handleSave = () => {
     console.log('Save clicked');
     if (!validateTemplate()) {
-      setSaveError('Please fill all required fields');
+      setSaveError(UI_STRINGS.SAVE_ERROR_REQUIRED);
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
@@ -162,7 +162,7 @@ export const BuilderPage: React.FC = () => {
                 className={styles.titleInput}
                 value={template.title}
                 onChange={handleTitleChange}
-                placeholder="Form title"
+                placeholder={UI_STRINGS.FORM_TITLE_PLACEHOLDER}
                 onFocus={() => {
                   setIsTitleActive(true);
                   setActiveFieldId(null);
@@ -175,7 +175,7 @@ export const BuilderPage: React.FC = () => {
               className={styles.descriptionInput}
               value={template.description || ''}
               onChange={handleDescriptionChange}
-              placeholder="Form description"
+              placeholder={UI_STRINGS.FORM_DESCRIPTION_PLACEHOLDER}
               onFocus={() => {
                 setIsTitleActive(true);
                 setActiveFieldId(null);
@@ -205,13 +205,13 @@ export const BuilderPage: React.FC = () => {
         </div>
 
         <div className={styles.addFieldContainer}>
-          <p className={styles.addFieldLabel}>Add New Question</p>
+          <p className={styles.addFieldLabel}>{UI_STRINGS.ADD_NEW_QUESTION}</p>
           <Select
             className={styles.typeSelectLarge}
             options={FIELD_TYPE_OPTIONS}
             value=""
             onChange={(value) => addField(value as FieldType)}
-            placeholder="Select field type..."
+            placeholder={UI_STRINGS.SELECT_TYPE_PLACEHOLDER}
           />
         </div>
       </main>

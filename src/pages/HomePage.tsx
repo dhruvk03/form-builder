@@ -5,6 +5,8 @@ import { loadTemplates, loadResponses, deleteTemplate } from '../utils/storage';
 import { Card } from '../components/common/Card';
 import styles from './HomePage.module.css';
 
+import { UI_STRINGS } from '../constants';
+
 export const HomePage: React.FC = () => {
   const [templates, setTemplates] = useState<FormTemplate[]>([]);
   const [responses, setResponses] = useState<FormResponse[]>([]);
@@ -20,7 +22,7 @@ export const HomePage: React.FC = () => {
   }, []);
 
   const handleDeleteTemplate = (id: string, title: string) => {
-    if (window.confirm(`Are you sure you want to delete the template "${title}"? This will also delete all its responses.`)) {
+    if (window.confirm(UI_STRINGS.DELETE_TEMPLATE_CONFIRM(title))) {
       deleteTemplate(id);
       refreshData();
     }
@@ -38,13 +40,13 @@ export const HomePage: React.FC = () => {
             className={styles.createButton}
             onClick={() => navigate('/builder')}
           >
-            + New Template
+            {UI_STRINGS.NEW_TEMPLATE}
           </button>
         </div>
 
         {templates.length === 0 ? (
           <div className={styles.emptyState}>
-            <p>No templates created yet.</p>
+            <p>{UI_STRINGS.NO_TEMPLATES}</p>
           </div>
         ) : (
           <div className={styles.templateList}>
@@ -53,7 +55,7 @@ export const HomePage: React.FC = () => {
                 <button 
                   onClick={() => handleDeleteTemplate(template.id, template.title)}
                   className={styles.deleteButton}
-                  title="Delete Template"
+                  title={UI_STRINGS.DELETE_TEMPLATE_CONFIRM(template.title)}
                 >
                   <svg 
                     width="18" 
@@ -80,34 +82,34 @@ export const HomePage: React.FC = () => {
                 
                 <div className={styles.actions}>
                   <Link to={`/builder/${template.id}`} className={styles.actionLink}>
-                    Edit Template
+                    {UI_STRINGS.EDIT_TEMPLATE}
                   </Link>
                   <Link to={`/fill/${template.id}/new`} className={styles.primaryActionLink}>
-                    New Response
+                    {UI_STRINGS.NEW_RESPONSE}
                   </Link>
                 </div>
 
                 <div className={styles.responsesSection}>
-                  <h3 className={styles.responsesTitle}>Responses:</h3>
+                  <h3 className={styles.responsesTitle}>{UI_STRINGS.RESPONSES_LABEL}</h3>
                   {getResponsesForTemplate(template.id).length === 0 ? (
-                    <p className={styles.noResponses}>No responses yet.</p>
+                    <p className={styles.noResponses}>{UI_STRINGS.NO_RESPONSES}</p>
                   ) : (
                     <ul className={styles.responseList}>
                       {getResponsesForTemplate(template.id).map((response) => (
                         <li key={response.id} className={styles.responseItem}>
-                          <span className={styles.responseDate}>Submitted on {new Date(response.submittedAt).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}</span>
+                          <span className={styles.responseDate}>{UI_STRINGS.SUBMITTED_ON} {new Date(response.submittedAt).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}</span>
                           <div className={styles.responseActions}>
                             <Link 
                               to={`/fill/${template.id}/${response.id}`} 
                               className={styles.viewLink}
                             >
-                              View
+                              {UI_STRINGS.VIEW}
                             </Link>
                             <Link 
                               to={`/fill/${template.id}/${response.id}?print=true`} 
                               className={styles.pdfLink}
                             >
-                              PDF
+                              {UI_STRINGS.PDF}
                             </Link>
                           </div>
                         </li>

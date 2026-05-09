@@ -1,10 +1,11 @@
 import React from 'react';
 import type { FormField, Dependency, DependencyOperator, DependencyAction, FieldType } from '../../types/schema';
 import { Card } from '../common/Card';
-import { Select } from '../common/Select';
+import { Select, type Option } from '../common/Select';
+import { UI_STRINGS, FILE_EXTENSIONS } from '../../constants';
 import styles from './FieldEditorCard.module.css';
 
-const FIELD_TYPE_OPTIONS = [
+const FIELD_TYPE_OPTIONS: Option[] = [
   { value: 'singleLineText', label: 'Short answer' },
   { value: 'multiLineText', label: 'Paragraph' },
   { value: 'singleSelect', label: 'Multiple choice' },
@@ -16,20 +17,20 @@ const FIELD_TYPE_OPTIONS = [
   { value: 'sectionHeader', label: 'Section Header' },
 ];
 
-const DISPLAY_TYPE_OPTIONS = [
+const DISPLAY_TYPE_OPTIONS: Option[] = [
   { value: 'radio', label: 'Radio' },
   { value: 'dropdown', label: 'Dropdown' },
   { value: 'tiles', label: 'Tiles' },
 ];
 
-const AGGREGATION_OPTIONS = [
+const AGGREGATION_OPTIONS: Option[] = [
   { value: 'sum', label: 'Sum' },
   { value: 'average', label: 'Average' },
   { value: 'minimum', label: 'Minimum' },
   { value: 'maximum', label: 'Maximum' },
 ];
 
-const getOperatorsForField = (type?: FieldType): { value: DependencyOperator; label: string }[] => {
+const getOperatorsForField = (type?: FieldType): Option[] => {
   switch (type) {
     case 'singleLineText':
     case 'multiLineText':
@@ -73,7 +74,7 @@ const getOperatorsForField = (type?: FieldType): { value: DependencyOperator; la
   }
 };
 
-const ACTION_OPTIONS = [
+const ACTION_OPTIONS: Option[] = [
   { value: 'show', label: 'Show' },
   { value: 'hide', label: 'Hide' },
   { value: 'require', label: 'Require' },
@@ -99,27 +100,27 @@ export const FieldEditorCard: React.FC<FieldEditorCardProps> = ({
     onUpdate({ ...field, ...updates } as FormField);
   };
 
-  const getValidationError = () => {
+  const getValidationError = (): string | null => {
     switch (field.type) {
       case 'singleLineText':
       case 'multiLineText':
         if (field.minLength !== undefined && field.maxLength !== undefined && field.maxLength < field.minLength) {
-          return 'Max length cannot be less than min length';
+          return UI_STRINGS.ERROR_MAX_LENGTH;
         }
         break;
       case 'number':
         if (field.min !== undefined && field.max !== undefined && field.max < field.min) {
-          return 'Max value cannot be less than min value';
+          return UI_STRINGS.ERROR_MAX_VALUE;
         }
         break;
       case 'date':
         if (field.minDate && field.maxDate && new Date(field.maxDate) < new Date(field.minDate)) {
-          return 'Max date cannot be before min date';
+          return UI_STRINGS.ERROR_MAX_DATE;
         }
         break;
       case 'multiSelect':
         if (field.minSelections !== undefined && field.maxSelections !== undefined && field.maxSelections < field.minSelections) {
-          return 'Max selections cannot be less than min selections';
+          return UI_STRINGS.ERROR_MAX_SELECTIONS;
         }
         break;
     }
@@ -147,7 +148,7 @@ export const FieldEditorCard: React.FC<FieldEditorCardProps> = ({
               <input
                 type="number"
                 value={field.minLength ?? ''}
-                onChange={(e) => handleChange({ minLength: e.target.value === '' ? undefined : parseInt(e.target.value, 10) })}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange({ minLength: e.target.value === '' ? undefined : parseInt(e.target.value, 10) })}
               />
             </div>
             <div className={styles.inputGroup}>
@@ -155,7 +156,7 @@ export const FieldEditorCard: React.FC<FieldEditorCardProps> = ({
               <input
                 type="number"
                 value={field.maxLength ?? ''}
-                onChange={(e) => handleChange({ maxLength: e.target.value === '' ? undefined : parseInt(e.target.value, 10) })}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange({ maxLength: e.target.value === '' ? undefined : parseInt(e.target.value, 10) })}
               />
             </div>
           </div>
@@ -169,7 +170,7 @@ export const FieldEditorCard: React.FC<FieldEditorCardProps> = ({
               <input
                 type="number"
                 value={field.min ?? ''}
-                onChange={(e) => handleChange({ min: e.target.value === '' ? undefined : parseFloat(e.target.value) })}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange({ min: e.target.value === '' ? undefined : parseFloat(e.target.value) })}
               />
             </div>
             <div className={styles.inputGroup}>
@@ -177,7 +178,7 @@ export const FieldEditorCard: React.FC<FieldEditorCardProps> = ({
               <input
                 type="number"
                 value={field.max ?? ''}
-                onChange={(e) => handleChange({ max: e.target.value === '' ? undefined : parseFloat(e.target.value) })}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange({ max: e.target.value === '' ? undefined : parseFloat(e.target.value) })}
               />
             </div>
             <div className={styles.inputGroup}>
@@ -187,7 +188,7 @@ export const FieldEditorCard: React.FC<FieldEditorCardProps> = ({
                 min="0"
                 max="4"
                 value={field.decimalPlaces ?? 0}
-                onChange={(e) => handleChange({ decimalPlaces: e.target.value === '' ? 0 : parseInt(e.target.value, 10) })}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange({ decimalPlaces: e.target.value === '' ? 0 : parseInt(e.target.value, 10) })}
               />
             </div>
           </div>
@@ -230,12 +231,12 @@ export const FieldEditorCard: React.FC<FieldEditorCardProps> = ({
                   type="text"
                   className={styles.optionInput}
                   value={option}
-                  onChange={(e) => {
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                     const newOptions = [...options];
                     newOptions[index] = e.target.value;
                     handleChange({ options: newOptions });
                   }}
-                  placeholder={`Option ${index + 1}`}
+                  placeholder={`${UI_STRINGS.PLACEHOLDER_OPTION} ${index + 1}`}
                 />
                 {options.length > 1 && (
                   <button 
@@ -254,7 +255,7 @@ export const FieldEditorCard: React.FC<FieldEditorCardProps> = ({
               className={styles.addOptionButton}
               onClick={() => handleChange({ options: [...options, ''] })}
             >
-              + Add option
+              {UI_STRINGS.BUTTON_ADD_OPTION}
             </button>
             
             <div className={styles.configGrid} style={{ marginTop: '16px' }}>
@@ -276,7 +277,7 @@ export const FieldEditorCard: React.FC<FieldEditorCardProps> = ({
                       type="number"
                       min="0"
                       value={field.minSelections ?? ''}
-                      onChange={(e) => handleChange({ minSelections: e.target.value === '' ? undefined : parseInt(e.target.value, 10) })}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange({ minSelections: e.target.value === '' ? undefined : parseInt(e.target.value, 10) })}
                     />
                   </div>
                   <div className={styles.inputGroup}>
@@ -285,7 +286,7 @@ export const FieldEditorCard: React.FC<FieldEditorCardProps> = ({
                       type="number"
                       min="1"
                       value={field.maxSelections ?? ''}
-                      onChange={(e) => handleChange({ maxSelections: e.target.value === '' ? undefined : parseInt(e.target.value, 10) })}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange({ maxSelections: e.target.value === '' ? undefined : parseInt(e.target.value, 10) })}
                     />
                   </div>
                 </>
@@ -297,7 +298,6 @@ export const FieldEditorCard: React.FC<FieldEditorCardProps> = ({
       
       case 'fileUpload': {
         const allowedTypes = field.allowedFileTypes || [];
-        const ALL_EXTENSIONS = ['.pdf', '.doc', '.docx', '.jpg', '.png', '.png', '.zip', '.xlsx'];
         
         return (
           <div className={styles.configGrid}>
@@ -307,18 +307,18 @@ export const FieldEditorCard: React.FC<FieldEditorCardProps> = ({
                 type="number"
                 min="1"
                 value={field.maxFiles ?? 1}
-                onChange={(e) => handleChange({ maxFiles: parseInt(e.target.value, 10) || 1 })}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange({ maxFiles: parseInt(e.target.value, 10) || 1 })}
               />
             </div>
             <div className={styles.inputGroupFull}>
               <label>Allowed Extensions</label>
               <div className={styles.checkboxListHorizontal}>
-                {ALL_EXTENSIONS.map(ext => (
+                {FILE_EXTENSIONS.map(ext => (
                   <label key={ext} className={styles.checkboxItem}>
                     <input
                       type="checkbox"
                       checked={allowedTypes.includes(ext)}
-                      onChange={(e) => {
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                         const next = e.target.checked
                           ? [...allowedTypes, ext]
                           : allowedTypes.filter(t => t !== ext);
@@ -347,7 +347,7 @@ export const FieldEditorCard: React.FC<FieldEditorCardProps> = ({
                     <input
                       type="checkbox"
                       checked={sourceFieldIds.includes(f.id)}
-                      onChange={(e) => {
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                         const newSources = e.target.checked
                           ? [...sourceFieldIds, f.id]
                           : sourceFieldIds.filter(id => id !== f.id);
@@ -405,8 +405,8 @@ export const FieldEditorCard: React.FC<FieldEditorCardProps> = ({
             type="text"
             className={styles.labelInput}
             value={field.label}
-            onChange={(e) => handleChange({ label: e.target.value })}
-            placeholder="Question"
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange({ label: e.target.value })}
+            placeholder={UI_STRINGS.PLACEHOLDER_QUESTION}
           />
           {!field.label.trim() && <span className={styles.requiredIndicator}>*</span>}
         </div>
@@ -440,12 +440,12 @@ export const FieldEditorCard: React.FC<FieldEditorCardProps> = ({
           <div className={styles.dependenciesSection}>
             <div className={styles.dependenciesDivider} />
             <div className={styles.sectionHeader}>
-              <h4>Dependencies</h4>
+              <h4>{UI_STRINGS.LABEL_DEPENDENCIES}</h4>
               <button 
                 onClick={addDependency} 
                 className={styles.addButton}
               >
-                + Add Dependency
+                {UI_STRINGS.BUTTON_ADD_DEPENDENCY}
               </button>
             </div>
             {field.dependencies?.map((dep, index) => {
@@ -486,8 +486,8 @@ export const FieldEditorCard: React.FC<FieldEditorCardProps> = ({
                           type="text"
                           className={styles.dependencyValueInput}
                           value={dep.value}
-                          onChange={(e) => updateDependency(index, { value: e.target.value })}
-                          placeholder="Value"
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateDependency(index, { value: e.target.value })}
+                          placeholder={UI_STRINGS.PLACEHOLDER_VALUE}
                         />
                       )}
                     </>
@@ -512,12 +512,12 @@ export const FieldEditorCard: React.FC<FieldEditorCardProps> = ({
           <input
             type="checkbox"
             checked={field.required}
-            onChange={(e) => handleChange({ required: e.target.checked })}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange({ required: e.target.checked })}
           />
-          Required
+          {UI_STRINGS.LABEL_REQUIRED}
         </label>
         <button onClick={() => onDelete(field.id)} className={styles.deleteButton}>
-          Delete Field
+          {UI_STRINGS.BUTTON_DELETE_FIELD}
         </button>
       </div>
     </Card>

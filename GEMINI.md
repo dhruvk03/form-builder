@@ -18,7 +18,7 @@ This project allows users to create, manage, and fill dynamic forms. It features
   - **9 Field Types:** Short Text, Paragraph, Number, Date, Single Select (Radio/Dropdown/Tiles), Multi Select, File Upload, Section Header, and Calculation.
   - **Conditional Logic:** Show/Hide/Require/Optional based on other field values.
   - **Dynamic Calculations:** Aggregate values (Sum, Average, Min, Max) from source fields in real-time.
-  - **Validation:** DFS-based circular dependency detection and deletion guarding.
+  - **Validation:** Deletion guarding for referenced fields.
 - **Form Filler:**
   - Real-time dependency and calculation updates using `useMemo`.
   - Schema-driven dynamic rendering.
