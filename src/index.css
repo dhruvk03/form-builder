@@ -66,17 +66,18 @@ input, textarea, select {
 
 @media print {
   @page {
-    margin: 0;
+    margin: 1.6cm;
   }
 
   body, #root {
     min-height: auto !important;
     height: auto !important;
+    background-color: #ffffff !important;
   }
 
   body {
-    background-color: white;
-    margin: 1.6cm;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
   
   .no-print {
@@ -91,6 +92,41 @@ input, textarea, select {
 
   .print-only {
     display: block !important;
+  }
+
+  /* Preserve the form's card aesthetic in PDF */
+  [class*="Card_card"], 
+  [class*="FillPage_headerCard"],
+  [class*="FormRenderer_fieldWrapper"] {
+    background-color: #ffffff !important;
+    border: 1px solid var(--color-border) !important;
+    border-radius: 8px !important;
+    margin-bottom: 12px !important;
+    padding: 24px !important;
+    box-shadow: none !important;
+    break-inside: avoid;
+    display: block !important;
+  }
+
+  /* Ensure accents are visible */
+  [class*="headerAccent"] {
+    display: block !important;
+    background-color: var(--color-primary) !important;
+    height: 10px !important;
+    width: 100% !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+  }
+
+  /* Fix input/form element appearance in PDF */
+  input, textarea, select {
+    border-bottom: 1px solid var(--color-border) !important;
+  }
+
+  /* Hide placeholder text in PDF */
+  ::placeholder {
+    color: transparent !important;
   }
 }
 

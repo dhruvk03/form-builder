@@ -271,25 +271,3 @@
   color: var(--color-text-secondary);
   font-style: italic;
 }
-
-@media print {
-  .fieldWrapper {
-    border: none !important;
-    padding: 12px 0 !important;
-  }
-
-  .input, .select, .textarea {
-    border-bottom: none !important;
-    padding: 4px 0 !important;
-  }
-
-  .fileItem {
-    background-color: transparent !important;
-    padding: 4px 0 !important;
-    color: var(--color-text-primary) !important;
-  }
-
-  .uploadLimit {
-    display: none !important;
-  }
-}

@@ -89,24 +89,3 @@
   font-weight: 500;
   white-space: nowrap;
 }
-
-@media print {
-  .container {
-    max-width: 100%;
-    padding: 0;
-  }
-  .main {
-    max-width: 100%;
-    padding: 0;
-    height: auto !important;
-    min-height: auto !important;
-  }
-  .headerCard {
-    border: none;
-    box-shadow: none;
-    padding: 0 !important;
-  }
-  .headerAccent {
-    display: none;
-  }
-}
