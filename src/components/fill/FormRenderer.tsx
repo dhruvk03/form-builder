@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import type { FormField } from '../../types/schema';
-import { CONFIG } from '../../constants';
+import { CONFIG, FIELD_TYPES, DISPLAY_TYPES } from '../../constants';
 import styles from './FormRenderer.module.css';
 
 interface FieldRendererProps {
@@ -13,9 +13,9 @@ interface FieldRendererProps {
 }
 
 const TextInput: React.FC<FieldRendererProps> = ({ field, value, onChange, error, required, readOnly }) => {
-  if (field.type !== 'singleLineText' && field.type !== 'multiLineText') return null;
+  if (field.type !== FIELD_TYPES.SINGLE_LINE_TEXT && field.type !== FIELD_TYPES.MULTI_LINE_TEXT) return null;
   
-  const InputComponent = field.type === 'singleLineText' ? 'input' : 'textarea';
+  const InputComponent = field.type === FIELD_TYPES.SINGLE_LINE_TEXT ? 'input' : 'textarea';
   
   return (
     <div className={styles.fieldContainer}>
@@ -29,7 +29,7 @@ const TextInput: React.FC<FieldRendererProps> = ({ field, value, onChange, error
         onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => onChange(e.target.value)}
         placeholder={readOnly ? '' : field.placeholder}
         disabled={readOnly}
-        rows={field.type === 'multiLineText' ? field.rows || CONFIG.DEFAULT_ROWS : undefined}
+        rows={field.type === FIELD_TYPES.MULTI_LINE_TEXT ? field.rows || CONFIG.DEFAULT_ROWS : undefined}
       />
       {error && <div className={styles.error}>{error}</div>}
     </div>
@@ -37,7 +37,7 @@ const TextInput: React.FC<FieldRendererProps> = ({ field, value, onChange, error
 };
 
 const NumberInput: React.FC<FieldRendererProps> = ({ field, value, onChange, error, required, readOnly }) => {
-  if (field.type !== 'number') return null;
+  if (field.type !== FIELD_TYPES.NUMBER) return null;
   
   return (
     <div className={styles.fieldContainer}>
@@ -58,9 +58,9 @@ const NumberInput: React.FC<FieldRendererProps> = ({ field, value, onChange, err
 };
 
 const SelectInput: React.FC<FieldRendererProps> = ({ field, value, onChange, error, required, readOnly }) => {
-  if (field.type !== 'singleSelect' && field.type !== 'multiSelect') return null;
+  if (field.type !== FIELD_TYPES.SINGLE_SELECT && field.type !== FIELD_TYPES.MULTI_SELECT) return null;
 
-  if (field.type === 'singleSelect' && field.displayType === 'dropdown') {
+  if (field.type === FIELD_TYPES.SINGLE_SELECT && field.displayType === DISPLAY_TYPES.DROPDOWN) {
     return (
       <div className={styles.fieldContainer}>
         <label className={styles.label}>
@@ -92,11 +92,11 @@ const SelectInput: React.FC<FieldRendererProps> = ({ field, value, onChange, err
           <label key={opt} className={styles.optionItem}>
             <div className={styles.inputWrapper}>
               <input
-                type={field.type === 'singleSelect' ? 'radio' : 'checkbox'}
+                type={field.type === FIELD_TYPES.SINGLE_SELECT ? DISPLAY_TYPES.RADIO : 'checkbox'}
                 name={field.id}
-                checked={field.type === 'singleSelect' ? value === opt : (value || []).includes(opt)}
+                checked={field.type === FIELD_TYPES.SINGLE_SELECT ? value === opt : (value || []).includes(opt)}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  if (field.type === 'singleSelect') {
+                  if (field.type === FIELD_TYPES.SINGLE_SELECT) {
                     onChange(opt);
                   } else {
                     const current = value || [];
@@ -109,7 +109,7 @@ const SelectInput: React.FC<FieldRendererProps> = ({ field, value, onChange, err
                 disabled={readOnly}
                 className={styles.hiddenInput}
               />
-              <span className={field.type === 'singleSelect' ? styles.customRadio : styles.customCheckbox}></span>
+              <span className={field.type === FIELD_TYPES.SINGLE_SELECT ? styles.customRadio : styles.customCheckbox}></span>
             </div>
             {opt}
           </label>
@@ -121,7 +121,7 @@ const SelectInput: React.FC<FieldRendererProps> = ({ field, value, onChange, err
 };
 
 const DateInput: React.FC<FieldRendererProps> = ({ field, value, onChange, error, required, readOnly }) => {
-  if (field.type !== 'date') return null;
+  if (field.type !== FIELD_TYPES.DATE) return null;
   
   return (
     <div className={styles.fieldContainer}>
@@ -143,7 +143,7 @@ const DateInput: React.FC<FieldRendererProps> = ({ field, value, onChange, error
 
 const FileUpload: React.FC<FieldRendererProps> = ({ field, value, onChange, error, required, readOnly }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  if (field.type !== 'fileUpload') return null;
+  if (field.type !== FIELD_TYPES.FILE_UPLOAD) return null;
   
   const files = value || [];
 
@@ -225,7 +225,7 @@ const FileUpload: React.FC<FieldRendererProps> = ({ field, value, onChange, erro
 };
 
 const SectionHeader: React.FC<{ field: FormField }> = ({ field }) => {
-  if (field.type !== 'sectionHeader') return null;
+  if (field.type !== FIELD_TYPES.SECTION_HEADER) return null;
   return (
     <div className={styles.sectionHeader}>
       <h3 className={styles.sectionTitle}>{field.label}</h3>
@@ -234,7 +234,7 @@ const SectionHeader: React.FC<{ field: FormField }> = ({ field }) => {
 };
 
 const CalculationDisplay: React.FC<FieldRendererProps> = ({ field, value }) => {
-  if (field.type !== 'calculation') return null;
+  if (field.type !== FIELD_TYPES.CALCULATION) return null;
   return (
     <div className={styles.fieldContainer}>
       <label className={styles.label}>{field.label} (Calculated)</label>
@@ -269,19 +269,19 @@ export const FormRenderer: React.FC<{
 
         return (
           <div key={field.id} className={styles.fieldWrapper}>
-            {field.type === 'sectionHeader' ? (
+            {field.type === FIELD_TYPES.SECTION_HEADER ? (
               <SectionHeader field={field} />
-            ) : field.type === 'calculation' ? (
+            ) : field.type === FIELD_TYPES.CALCULATION ? (
               <CalculationDisplay {...commonProps} />
-            ) : field.type === 'singleLineText' || field.type === 'multiLineText' ? (
+            ) : field.type === FIELD_TYPES.SINGLE_LINE_TEXT || field.type === FIELD_TYPES.MULTI_LINE_TEXT ? (
               <TextInput {...commonProps} />
-            ) : field.type === 'number' ? (
+            ) : field.type === FIELD_TYPES.NUMBER ? (
               <NumberInput {...commonProps} />
-            ) : field.type === 'date' ? (
+            ) : field.type === FIELD_TYPES.DATE ? (
               <DateInput {...commonProps} />
-            ) : field.type === 'singleSelect' || field.type === 'multiSelect' ? (
+            ) : field.type === FIELD_TYPES.SINGLE_SELECT || field.type === FIELD_TYPES.MULTI_SELECT ? (
               <SelectInput {...commonProps} />
-            ) : field.type === 'fileUpload' ? (
+            ) : field.type === FIELD_TYPES.FILE_UPLOAD ? (
               <FileUpload {...commonProps} />
             ) : null}
           </div>

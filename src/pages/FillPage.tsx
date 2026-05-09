@@ -8,7 +8,7 @@ import { evaluateFieldState } from '../utils/dependency';
 import { FormRenderer } from '../components/fill/FormRenderer';
 import { Card } from '../components/common/Card';
 import styles from './FillPage.module.css';
-import { UI_STRINGS, CONFIG } from '../constants';
+import { UI_STRINGS, CONFIG, FIELD_TYPES, AGGREGATION_TYPES } from '../constants';
 
 export const FillPage: React.FC = () => {
   const { templateId, responseId } = useParams<{ templateId: string; responseId?: string }>();
@@ -67,7 +67,7 @@ export const FillPage: React.FC = () => {
 
     // Second pass: calculations
     template.fields.forEach(field => {
-      if (field.type === 'calculation' && visible.has(field.id)) {
+      if (field.type === FIELD_TYPES.CALCULATION && visible.has(field.id)) {
         const sourceValues = field.sourceFieldIds
           .filter(id => visible.has(id))
           .map(id => Number(values[id]))
@@ -76,10 +76,10 @@ export const FillPage: React.FC = () => {
         if (sourceValues.length > 0) {
           let result = 0;
           switch (field.aggregationType) {
-            case 'sum': result = sourceValues.reduce((a, b) => a + b, 0); break;
-            case 'average': result = sourceValues.reduce((a, b) => a + b, 0) / sourceValues.length; break;
-            case 'minimum': result = Math.min(...sourceValues); break;
-            case 'maximum': result = Math.max(...sourceValues); break;
+            case AGGREGATION_TYPES.SUM: result = sourceValues.reduce((a, b) => a + b, 0); break;
+            case AGGREGATION_TYPES.AVERAGE: result = sourceValues.reduce((a, b) => a + b, 0) / sourceValues.length; break;
+            case AGGREGATION_TYPES.MINIMUM: result = Math.min(...sourceValues); break;
+            case AGGREGATION_TYPES.MAXIMUM: result = Math.max(...sourceValues); break;
           }
           calculated[field.id] = Number(result.toFixed(field.decimalPlaces || CONFIG.DEFAULT_DECIMAL_PLACES));
         }
@@ -119,7 +119,7 @@ export const FillPage: React.FC = () => {
       const field = template.fields.find(f => f.id === fieldId);
       if (field) {
         // Skip validation only for section headers (they have no value)
-        if (field.type === 'sectionHeader') return;
+        if (field.type === FIELD_TYPES.SECTION_HEADER) return;
         
         const error = validateField(field, values[fieldId]);
         if (error) {
@@ -136,7 +136,7 @@ export const FillPage: React.FC = () => {
 
     const submittedValues: Record<string, any> = {};
     visibleFields.forEach(fieldId => {
-      if (template.fields.find(f => f.id === fieldId)?.type !== 'calculation') {
+      if (template.fields.find(f => f.id === fieldId)?.type !== FIELD_TYPES.CALCULATION) {
         submittedValues[fieldId] = values[fieldId];
       }
     });

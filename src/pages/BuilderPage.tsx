@@ -6,20 +6,13 @@ import { generateId } from '../utils/id';
 import { Card } from '../components/common/Card';
 import { FieldEditorCard } from '../components/builder/FieldEditorCard';
 import { Select, type Option } from '../components/common/Select';
-import { UI_STRINGS, CONFIG } from '../constants';
+import { UI_STRINGS, CONFIG, FIELD_TYPES, DISPLAY_TYPES, AGGREGATION_TYPES } from '../constants';
 import styles from './BuilderPage.module.css';
 
-const FIELD_TYPE_OPTIONS: Option[] = [
-  { value: 'singleLineText', label: 'Short Text' },
-  { value: 'multiLineText', label: 'Long Text' },
-  { value: 'number', label: 'Number' },
-  { value: 'date', label: 'Date' },
-  { value: 'singleSelect', label: 'Multiple Choice (Radio)' },
-  { value: 'multiSelect', label: 'Checkboxes' },
-  { value: 'fileUpload', label: 'File Upload' },
-  { value: 'sectionHeader', label: 'Section Header' },
-  { value: 'calculation', label: 'Calculation' },
-];
+const FIELD_TYPE_OPTIONS: Option[] = Object.values(FIELD_TYPES).map(type => ({
+  value: type,
+  label: UI_STRINGS.FIELD_TYPE_LABELS[type]
+}));
 
 export const BuilderPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -43,12 +36,12 @@ export const BuilderPage: React.FC = () => {
     for (const field of template.fields) {
       if (!field.label.trim()) return false;
       
-      if (field.type === 'singleSelect' || field.type === 'multiSelect') {
+      if (field.type === FIELD_TYPES.SINGLE_SELECT || field.type === FIELD_TYPES.MULTI_SELECT) {
         if (!field.options || field.options.length === 0) return false;
         if (field.options.some(opt => !opt.trim())) return false;
       }
       
-      if (field.type === 'calculation') {
+      if (field.type === FIELD_TYPES.CALCULATION) {
         if (!field.sourceFieldIds || field.sourceFieldIds.length === 0) return false;
       }
     }
@@ -83,8 +76,8 @@ export const BuilderPage: React.FC = () => {
       label: '',
       description: '',
       required: false,
-      ...(type === 'singleSelect' || type === 'multiSelect' ? { options: [''], displayType: 'radio' } : {}),
-      ...(type === 'calculation' ? { sourceFieldIds: [], aggregationType: 'sum' } : {}),
+      ...(type === FIELD_TYPES.SINGLE_SELECT || type === FIELD_TYPES.MULTI_SELECT ? { options: [''], displayType: DISPLAY_TYPES.RADIO } : {}),
+      ...(type === FIELD_TYPES.CALCULATION ? { sourceFieldIds: [], aggregationType: AGGREGATION_TYPES.SUM } : {}),
     } as any;
 
     setTemplate((prev) => ({
@@ -106,7 +99,7 @@ export const BuilderPage: React.FC = () => {
   const deleteField = (fieldId: string) => {
     const dependentFields = template.fields.filter((f) => {
       const hasDep = f.dependencies?.some((d) => d.fieldId === fieldId);
-      const isSource = f.type === 'calculation' && f.sourceFieldIds.includes(fieldId);
+      const isSource = f.type === FIELD_TYPES.CALCULATION && f.sourceFieldIds.includes(fieldId);
       return hasDep || isSource;
     });
 

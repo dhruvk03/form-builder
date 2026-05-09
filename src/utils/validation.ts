@@ -1,7 +1,8 @@
+import { FIELD_TYPES } from '../constants';
 import type { FormField } from '../types/schema';
 
 export const validateField = (field: FormField, value: any): string | null => {
-  if (field.type === 'sectionHeader') return null;
+  if (field.type === FIELD_TYPES.SECTION_HEADER) return null;
 
   const isEmpty = value === undefined || value === null || value === '' || (Array.isArray(value) && value.length === 0);
 
@@ -10,8 +11,8 @@ export const validateField = (field: FormField, value: any): string | null => {
   }
 
   switch (field.type) {
-    case 'singleLineText':
-    case 'multiLineText': {
+    case FIELD_TYPES.SINGLE_LINE_TEXT:
+    case FIELD_TYPES.MULTI_LINE_TEXT: {
       const minLength = (field as any).minLength;
       const maxLength = (field as any).maxLength;
       const currentLength = String(value || '').length;
@@ -31,7 +32,7 @@ export const validateField = (field: FormField, value: any): string | null => {
       break;
     }
 
-    case 'number': {
+    case FIELD_TYPES.NUMBER: {
       // If empty and not required, only check min if min is set
       if (isEmpty) {
         const minVal = (field as any).min;
@@ -65,7 +66,7 @@ export const validateField = (field: FormField, value: any): string | null => {
       break;
     }
 
-    case 'date': {
+    case FIELD_TYPES.DATE: {
       if (isEmpty) {
         // If not required but has constraints, check if 0/empty should be blocked
         // Usually for dates, if it's empty and not required, it's valid unless there's a specific "cannot be empty" logic
@@ -93,7 +94,7 @@ export const validateField = (field: FormField, value: any): string | null => {
       break;
     }
 
-    case 'multiSelect': {
+    case FIELD_TYPES.MULTI_SELECT: {
       if (isEmpty) {
         if ((field as any).minSelections && (field as any).minSelections > 0) {
           return `Select at least ${(field as any).minSelections} options`;
@@ -109,7 +110,7 @@ export const validateField = (field: FormField, value: any): string | null => {
       break;
     }
 
-    case 'fileUpload': {
+    case FIELD_TYPES.FILE_UPLOAD: {
       if (isEmpty) {
         return null;
       }

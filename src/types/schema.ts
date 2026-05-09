@@ -1,28 +1,10 @@
-export type FieldType =
-  | 'singleLineText'
-  | 'multiLineText'
-  | 'number'
-  | 'date'
-  | 'singleSelect'
-  | 'multiSelect'
-  | 'fileUpload'
-  | 'sectionHeader'
-  | 'calculation';
+import { FIELD_TYPES, DEPENDENCY_OPERATORS, DEPENDENCY_ACTIONS, DISPLAY_TYPES, AGGREGATION_TYPES } from '../constants';
 
-export type DependencyOperator =
-  | 'equals'
-  | 'notEquals'
-  | 'contains'
-  | 'greaterThan'
-  | 'lessThan'
-  | 'withinRange'
-  | 'containsAny'
-  | 'containsAll'
-  | 'containsNone'
-  | 'before'
-  | 'after';
+export type FieldType = typeof FIELD_TYPES[keyof typeof FIELD_TYPES];
 
-export type DependencyAction = 'show' | 'hide' | 'require' | 'optional';
+export type DependencyOperator = typeof DEPENDENCY_OPERATORS[keyof typeof DEPENDENCY_OPERATORS];
+
+export type DependencyAction = typeof DEPENDENCY_ACTIONS[keyof typeof DEPENDENCY_ACTIONS];
 
 export interface Dependency {
   fieldId: string;
@@ -41,7 +23,7 @@ export interface BaseField {
 }
 
 export interface SingleLineTextField extends BaseField {
-  type: 'singleLineText';
+  type: typeof FIELD_TYPES.SINGLE_LINE_TEXT;
   placeholder?: string;
   minLength?: number;
   maxLength?: number;
@@ -50,7 +32,7 @@ export interface SingleLineTextField extends BaseField {
 }
 
 export interface MultiLineTextField extends BaseField {
-  type: 'multiLineText';
+  type: typeof FIELD_TYPES.MULTI_LINE_TEXT;
   placeholder?: string;
   minLength?: number;
   maxLength?: number;
@@ -58,7 +40,7 @@ export interface MultiLineTextField extends BaseField {
 }
 
 export interface NumberField extends BaseField {
-  type: 'number';
+  type: typeof FIELD_TYPES.NUMBER;
   min?: number;
   max?: number;
   decimalPlaces?: number;
@@ -67,41 +49,41 @@ export interface NumberField extends BaseField {
 }
 
 export interface DateField extends BaseField {
-  type: 'date';
+  type: typeof FIELD_TYPES.DATE;
   prefillToday?: boolean;
   minDate?: string;
   maxDate?: string;
 }
 
-export type SingleSelectDisplayType = 'radio' | 'dropdown' | 'tiles';
+export type SingleSelectDisplayType = typeof DISPLAY_TYPES[keyof typeof DISPLAY_TYPES];
 
 export interface SingleSelectField extends BaseField {
-  type: 'singleSelect';
+  type: typeof FIELD_TYPES.SINGLE_SELECT;
   options: string[];
   displayType: SingleSelectDisplayType;
 }
 
 export interface MultiSelectField extends BaseField {
-  type: 'multiSelect';
+  type: typeof FIELD_TYPES.MULTI_SELECT;
   options: string[];
   minSelections?: number;
   maxSelections?: number;
 }
 
 export interface FileUploadField extends BaseField {
-  type: 'fileUpload';
+  type: typeof FIELD_TYPES.FILE_UPLOAD;
   allowedFileTypes?: string[];
   maxFiles?: number;
 }
 
 export interface SectionHeaderField extends BaseField {
-  type: 'sectionHeader';
+  type: typeof FIELD_TYPES.SECTION_HEADER;
 }
 
-export type AggregationType = 'sum' | 'average' | 'minimum' | 'maximum';
+export type AggregationType = typeof AGGREGATION_TYPES[keyof typeof AGGREGATION_TYPES];
 
 export interface CalculationField extends BaseField {
-  type: 'calculation';
+  type: typeof FIELD_TYPES.CALCULATION;
   sourceFieldIds: string[];
   aggregationType: AggregationType;
   decimalPlaces?: number;

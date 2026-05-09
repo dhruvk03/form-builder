@@ -1,4 +1,5 @@
 import type { FormField, Dependency } from '../types/schema';
+import { DEPENDENCY_ACTIONS, DEPENDENCY_OPERATORS } from '../constants';
 
 export const evaluateFieldState = (
   field: FormField,
@@ -17,15 +18,15 @@ export const evaluateFieldState = (
     const isSatisfied = checkDependency(dep, dependentValue, allFields);
 
     if (isSatisfied) {
-      if (dep.action === 'show') visible = true;
-      if (dep.action === 'hide') visible = false;
-      if (dep.action === 'require') required = true;
-      if (dep.action === 'optional') required = false;
+      if (dep.action === DEPENDENCY_ACTIONS.SHOW) visible = true;
+      if (dep.action === DEPENDENCY_ACTIONS.HIDE) visible = false;
+      if (dep.action === DEPENDENCY_ACTIONS.REQUIRE) required = true;
+      if (dep.action === DEPENDENCY_ACTIONS.OPTIONAL) required = false;
     } else {
       // If it's a show action and not satisfied, it should be hidden
-      if (dep.action === 'show') visible = false;
+      if (dep.action === DEPENDENCY_ACTIONS.SHOW) visible = false;
       // If it's a require action and not satisfied, it should be optional
-      if (dep.action === 'require') required = field.required || false;
+      if (dep.action === DEPENDENCY_ACTIONS.REQUIRE) required = field.required || false;
     }
   }
 
@@ -37,21 +38,21 @@ const checkDependency = (dep: Dependency, value: any, allFields: FormField[]): b
   const isEmpty = value === undefined || value === null || value === '' || (Array.isArray(value) && value.length === 0);
 
   switch (dep.operator) {
-    case 'equals':
+    case DEPENDENCY_OPERATORS.EQUALS:
       return String(value || '') === String(targetValue || '');
-    case 'notEquals':
+    case DEPENDENCY_OPERATORS.NOT_EQUALS:
       return String(value || '') !== String(targetValue || '');
-    case 'contains':
+    case DEPENDENCY_OPERATORS.CONTAINS:
       if (isEmpty) return false;
       if (Array.isArray(value)) {
         return value.includes(targetValue);
       }
       return String(value).toLowerCase().includes(String(targetValue).toLowerCase());
-    case 'greaterThan':
+    case DEPENDENCY_OPERATORS.GREATER_THAN:
       return !isEmpty && Number(value) > Number(targetValue);
-    case 'lessThan':
+    case DEPENDENCY_OPERATORS.LESS_THAN:
       return !isEmpty && Number(value) < Number(targetValue);
-    case 'withinRange': {
+    case DEPENDENCY_OPERATORS.WITHIN_RANGE: {
       if (isEmpty) return false;
       const rangeArr = Array.isArray(targetValue) 
         ? targetValue 
@@ -62,13 +63,13 @@ const checkDependency = (dep: Dependency, value: any, allFields: FormField[]): b
       }
       return false;
     }
-    case 'containsAny': {
+    case DEPENDENCY_OPERATORS.CONTAINS_ANY: {
       if (isEmpty) return false;
       const valArr = Array.isArray(value) ? value : [value];
       const targetArr = String(targetValue).split(',').map(s => s.trim());
       return targetArr.some(t => valArr.includes(t));
     }
-    case 'containsAll': {
+    case DEPENDENCY_OPERATORS.CONTAINS_ALL: {
       if (isEmpty) return false;
       const valArr = Array.isArray(value) ? value : [value];
       
@@ -83,15 +84,15 @@ const checkDependency = (dep: Dependency, value: any, allFields: FormField[]): b
       const targetArr = String(targetValue).split(',').map(s => s.trim());
       return targetArr.every(t => valArr.includes(t));
     }
-    case 'containsNone': {
+    case DEPENDENCY_OPERATORS.CONTAINS_NONE: {
       if (isEmpty) return false; // Don't trigger hide/show if nothing is selected
       const valArr = Array.isArray(value) ? value : [value];
       const targetArr = String(targetValue).split(',').map(s => s.trim());
       return !targetArr.some(t => valArr.includes(t));
     }
-    case 'before':
+    case DEPENDENCY_OPERATORS.BEFORE:
       return !isEmpty && new Date(value) < new Date(targetValue);
-    case 'after':
+    case DEPENDENCY_OPERATORS.AFTER:
       return !isEmpty && new Date(value) > new Date(targetValue);
     default:
       return false;

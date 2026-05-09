@@ -1,4 +1,61 @@
+export const FIELD_TYPES = {
+  SINGLE_LINE_TEXT: 'singleLineText',
+  MULTI_LINE_TEXT: 'multiLineText',
+  NUMBER: 'number',
+  DATE: 'date',
+  SINGLE_SELECT: 'singleSelect',
+  MULTI_SELECT: 'multiSelect',
+  FILE_UPLOAD: 'fileUpload',
+  SECTION_HEADER: 'sectionHeader',
+  CALCULATION: 'calculation',
+} as const;
+
+export const DEPENDENCY_OPERATORS = {
+  EQUALS: 'equals',
+  NOT_EQUALS: 'notEquals',
+  CONTAINS: 'contains',
+  GREATER_THAN: 'greaterThan',
+  LESS_THAN: 'lessThan',
+  WITHIN_RANGE: 'withinRange',
+  CONTAINS_ANY: 'containsAny',
+  CONTAINS_ALL: 'containsAll',
+  CONTAINS_NONE: 'containsNone',
+  BEFORE: 'before',
+  AFTER: 'after',
+} as const;
+
+export const DEPENDENCY_ACTIONS = {
+  SHOW: 'show',
+  HIDE: 'hide',
+  REQUIRE: 'require',
+  OPTIONAL: 'optional',
+} as const;
+
+export const DISPLAY_TYPES = {
+  RADIO: 'radio',
+  DROPDOWN: 'dropdown',
+  TILES: 'tiles',
+} as const;
+
+export const AGGREGATION_TYPES = {
+  SUM: 'sum',
+  AVERAGE: 'average',
+  MINIMUM: 'minimum',
+  MAXIMUM: 'maximum',
+} as const;
+
 export const UI_STRINGS = {
+  FIELD_TYPE_LABELS: {
+    [FIELD_TYPES.SINGLE_LINE_TEXT]: 'Short Text',
+    [FIELD_TYPES.MULTI_LINE_TEXT]: 'Long Text',
+    [FIELD_TYPES.NUMBER]: 'Number',
+    [FIELD_TYPES.DATE]: 'Date',
+    [FIELD_TYPES.SINGLE_SELECT]: 'Multiple Choice (Radio)',
+    [FIELD_TYPES.MULTI_SELECT]: 'Checkboxes',
+    [FIELD_TYPES.FILE_UPLOAD]: 'File Upload',
+    [FIELD_TYPES.SECTION_HEADER]: 'Section Header',
+    [FIELD_TYPES.CALCULATION]: 'Calculation',
+  },
   SELECT_TYPE_PLACEHOLDER: 'Select field type...',
   SAVE_ERROR_REQUIRED: 'Please fill all required fields',
   FORM_TITLE_PLACEHOLDER: 'Form title',

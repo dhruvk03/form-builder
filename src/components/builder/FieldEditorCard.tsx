@@ -2,83 +2,76 @@ import React from 'react';
 import type { FormField, Dependency, DependencyOperator, DependencyAction, FieldType } from '../../types/schema';
 import { Card } from '../common/Card';
 import { Select, type Option } from '../common/Select';
-import { UI_STRINGS, FILE_EXTENSIONS } from '../../constants';
+import { UI_STRINGS, FILE_EXTENSIONS, FIELD_TYPES, DISPLAY_TYPES, AGGREGATION_TYPES, DEPENDENCY_OPERATORS, DEPENDENCY_ACTIONS } from '../../constants';
 import styles from './FieldEditorCard.module.css';
 
-const FIELD_TYPE_OPTIONS: Option[] = [
-  { value: 'singleLineText', label: 'Short answer' },
-  { value: 'multiLineText', label: 'Paragraph' },
-  { value: 'singleSelect', label: 'Multiple choice' },
-  { value: 'multiSelect', label: 'Checkboxes' },
-  { value: 'fileUpload', label: 'File upload' },
-  { value: 'number', label: 'Number' },
-  { value: 'date', label: 'Date' },
-  { value: 'calculation', label: 'Calculation' },
-  { value: 'sectionHeader', label: 'Section Header' },
-];
+const FIELD_TYPE_OPTIONS: Option[] = Object.values(FIELD_TYPES).map(type => ({
+  value: type,
+  label: UI_STRINGS.FIELD_TYPE_LABELS[type]
+}));
 
 const DISPLAY_TYPE_OPTIONS: Option[] = [
-  { value: 'radio', label: 'Radio' },
-  { value: 'dropdown', label: 'Dropdown' },
-  { value: 'tiles', label: 'Tiles' },
+  { value: DISPLAY_TYPES.RADIO, label: 'Radio' },
+  { value: DISPLAY_TYPES.DROPDOWN, label: 'Dropdown' },
+  { value: DISPLAY_TYPES.TILES, label: 'Tiles' },
 ];
 
 const AGGREGATION_OPTIONS: Option[] = [
-  { value: 'sum', label: 'Sum' },
-  { value: 'average', label: 'Average' },
-  { value: 'minimum', label: 'Minimum' },
-  { value: 'maximum', label: 'Maximum' },
+  { value: AGGREGATION_TYPES.SUM, label: 'Sum' },
+  { value: AGGREGATION_TYPES.AVERAGE, label: 'Average' },
+  { value: AGGREGATION_TYPES.MINIMUM, label: 'Minimum' },
+  { value: AGGREGATION_TYPES.MAXIMUM, label: 'Maximum' },
 ];
 
 const getOperatorsForField = (type?: FieldType): Option[] => {
   switch (type) {
-    case 'singleLineText':
-    case 'multiLineText':
+    case FIELD_TYPES.SINGLE_LINE_TEXT:
+    case FIELD_TYPES.MULTI_LINE_TEXT:
       return [
-        { value: 'equals', label: 'Equals' },
-        { value: 'notEquals', label: 'Not Equals' },
-        { value: 'contains', label: 'Contains' },
+        { value: DEPENDENCY_OPERATORS.EQUALS, label: 'Equals' },
+        { value: DEPENDENCY_OPERATORS.NOT_EQUALS, label: 'Not Equals' },
+        { value: DEPENDENCY_OPERATORS.CONTAINS, label: 'Contains' },
       ];
-    case 'number':
-    case 'calculation':
+    case FIELD_TYPES.NUMBER:
+    case FIELD_TYPES.CALCULATION:
       return [
-        { value: 'equals', label: 'Equals' },
-        { value: 'notEquals', label: 'Not Equals' },
-        { value: 'greaterThan', label: 'Greater Than' },
-        { value: 'lessThan', label: 'Less Than' },
-        { value: 'withinRange', label: 'Within Range' },
+        { value: DEPENDENCY_OPERATORS.EQUALS, label: 'Equals' },
+        { value: DEPENDENCY_OPERATORS.NOT_EQUALS, label: 'Not Equals' },
+        { value: DEPENDENCY_OPERATORS.GREATER_THAN, label: 'Greater Than' },
+        { value: DEPENDENCY_OPERATORS.LESS_THAN, label: 'Less Than' },
+        { value: DEPENDENCY_OPERATORS.WITHIN_RANGE, label: 'Within Range' },
       ];
-    case 'date':
+    case FIELD_TYPES.DATE:
       return [
-        { value: 'equals', label: 'Equals' },
-        { value: 'notEquals', label: 'Not Equals' },
-        { value: 'before', label: 'Before' },
-        { value: 'after', label: 'After' },
+        { value: DEPENDENCY_OPERATORS.EQUALS, label: 'Equals' },
+        { value: DEPENDENCY_OPERATORS.NOT_EQUALS, label: 'Not Equals' },
+        { value: DEPENDENCY_OPERATORS.BEFORE, label: 'Before' },
+        { value: DEPENDENCY_OPERATORS.AFTER, label: 'After' },
       ];
-    case 'singleSelect':
+    case FIELD_TYPES.SINGLE_SELECT:
       return [
-        { value: 'equals', label: 'Equals' },
-        { value: 'notEquals', label: 'Not Equals' },
+        { value: DEPENDENCY_OPERATORS.EQUALS, label: 'Equals' },
+        { value: DEPENDENCY_OPERATORS.NOT_EQUALS, label: 'Not Equals' },
       ];
-    case 'multiSelect':
+    case FIELD_TYPES.MULTI_SELECT:
       return [
-        { value: 'containsAny', label: 'Contains' },
-        { value: 'containsAll', label: 'All selected' },
-        { value: 'containsNone', label: 'Does not contain' },
+        { value: DEPENDENCY_OPERATORS.CONTAINS_ANY, label: 'Contains' },
+        { value: DEPENDENCY_OPERATORS.CONTAINS_ALL, label: 'All selected' },
+        { value: DEPENDENCY_OPERATORS.CONTAINS_NONE, label: 'Does not contain' },
       ];
     default:
       return [
-        { value: 'equals', label: 'Equals' },
-        { value: 'notEquals', label: 'Not Equals' },
+        { value: DEPENDENCY_OPERATORS.EQUALS, label: 'Equals' },
+        { value: DEPENDENCY_OPERATORS.NOT_EQUALS, label: 'Not Equals' },
       ];
   }
 };
 
 const ACTION_OPTIONS: Option[] = [
-  { value: 'show', label: 'Show' },
-  { value: 'hide', label: 'Hide' },
-  { value: 'require', label: 'Require' },
-  { value: 'optional', label: 'Optional' },
+  { value: DEPENDENCY_ACTIONS.SHOW, label: 'Show' },
+  { value: DEPENDENCY_ACTIONS.HIDE, label: 'Hide' },
+  { value: DEPENDENCY_ACTIONS.REQUIRE, label: 'Require' },
+  { value: DEPENDENCY_ACTIONS.OPTIONAL, label: 'Optional' },
 ];
 
 interface FieldEditorCardProps {
@@ -102,23 +95,23 @@ export const FieldEditorCard: React.FC<FieldEditorCardProps> = ({
 
   const getValidationError = (): string | null => {
     switch (field.type) {
-      case 'singleLineText':
-      case 'multiLineText':
+      case FIELD_TYPES.SINGLE_LINE_TEXT:
+      case FIELD_TYPES.MULTI_LINE_TEXT:
         if (field.minLength !== undefined && field.maxLength !== undefined && field.maxLength < field.minLength) {
           return UI_STRINGS.ERROR_MAX_LENGTH;
         }
         break;
-      case 'number':
+      case FIELD_TYPES.NUMBER:
         if (field.min !== undefined && field.max !== undefined && field.max < field.min) {
           return UI_STRINGS.ERROR_MAX_VALUE;
         }
         break;
-      case 'date':
+      case FIELD_TYPES.DATE:
         if (field.minDate && field.maxDate && new Date(field.maxDate) < new Date(field.minDate)) {
           return UI_STRINGS.ERROR_MAX_DATE;
         }
         break;
-      case 'multiSelect':
+      case FIELD_TYPES.MULTI_SELECT:
         if (field.minSelections !== undefined && field.maxSelections !== undefined && field.maxSelections < field.minSelections) {
           return UI_STRINGS.ERROR_MAX_SELECTIONS;
         }
@@ -131,8 +124,8 @@ export const FieldEditorCard: React.FC<FieldEditorCardProps> = ({
 
   const renderConfig = () => {
     switch (field.type) {
-      case 'singleLineText':
-      case 'multiLineText':
+      case FIELD_TYPES.SINGLE_LINE_TEXT:
+      case FIELD_TYPES.MULTI_LINE_TEXT:
         return (
           <div className={styles.configGrid}>
             <div className={styles.inputGroup}>
@@ -162,7 +155,7 @@ export const FieldEditorCard: React.FC<FieldEditorCardProps> = ({
           </div>
         );
 
-      case 'number':
+      case FIELD_TYPES.NUMBER:
         return (
           <div className={styles.configGrid}>
             <div className={styles.inputGroup}>
@@ -194,7 +187,7 @@ export const FieldEditorCard: React.FC<FieldEditorCardProps> = ({
           </div>
         );
 
-      case 'date':
+      case FIELD_TYPES.DATE:
         return (
           <div className={styles.configGrid}>
             <div className={styles.inputGroup}>
@@ -216,8 +209,8 @@ export const FieldEditorCard: React.FC<FieldEditorCardProps> = ({
           </div>
         );
 
-      case 'singleSelect':
-      case 'multiSelect': {
+      case FIELD_TYPES.SINGLE_SELECT:
+      case FIELD_TYPES.MULTI_SELECT: {
         const options = field.options || [];
         return (
           <div className={styles.optionsSection}>
@@ -259,7 +252,7 @@ export const FieldEditorCard: React.FC<FieldEditorCardProps> = ({
             </button>
             
             <div className={styles.configGrid} style={{ marginTop: '16px' }}>
-              {field.type === 'singleSelect' && (
+              {field.type === FIELD_TYPES.SINGLE_SELECT && (
                 <div className={styles.inputGroup}>
                   <label>Display Type</label>
                   <Select
@@ -269,7 +262,7 @@ export const FieldEditorCard: React.FC<FieldEditorCardProps> = ({
                   />
                 </div>
               )}
-              {field.type === 'multiSelect' && (
+              {field.type === FIELD_TYPES.MULTI_SELECT && (
                 <>
                   <div className={styles.inputGroup}>
                     <label>Min Selections</label>
@@ -296,7 +289,7 @@ export const FieldEditorCard: React.FC<FieldEditorCardProps> = ({
         );
       }
       
-      case 'fileUpload': {
+      case FIELD_TYPES.FILE_UPLOAD: {
         const allowedTypes = field.allowedFileTypes || [];
         
         return (
@@ -334,8 +327,8 @@ export const FieldEditorCard: React.FC<FieldEditorCardProps> = ({
         );
       }
 
-      case 'calculation': {
-        const otherFields = allFields.filter(f => f.id !== field.id && f.type === 'number');
+      case FIELD_TYPES.CALCULATION: {
+        const otherFields = allFields.filter(f => f.id !== field.id && f.type === FIELD_TYPES.NUMBER);
         const sourceFieldIds = field.sourceFieldIds || [];
         return (
           <div className={styles.configGrid}>
@@ -379,9 +372,9 @@ export const FieldEditorCard: React.FC<FieldEditorCardProps> = ({
   const addDependency = () => {
     const newDep: Dependency = {
       fieldId: allFields[0]?.id || '',
-      operator: 'equals',
+      operator: DEPENDENCY_OPERATORS.EQUALS,
       value: '',
-      action: 'show'
+      action: DEPENDENCY_ACTIONS.SHOW
     };
     handleChange({ dependencies: [...(field.dependencies || []), newDep] });
   };
@@ -418,13 +411,13 @@ export const FieldEditorCard: React.FC<FieldEditorCardProps> = ({
             const newType = value as FieldType;
             const updates: any = { type: newType };
             
-            if ((newType === 'singleSelect' || newType === 'multiSelect') && !('options' in field)) {
+            if ((newType === FIELD_TYPES.SINGLE_SELECT || newType === FIELD_TYPES.MULTI_SELECT) && !('options' in field)) {
               updates.options = [''];
-              updates.displayType = 'radio';
+              updates.displayType = DISPLAY_TYPES.RADIO;
             }
-            if (newType === 'calculation' && !('sourceFieldIds' in field)) {
+            if (newType === FIELD_TYPES.CALCULATION && !('sourceFieldIds' in field)) {
               updates.sourceFieldIds = [];
-              updates.aggregationType = 'sum';
+              updates.aggregationType = AGGREGATION_TYPES.SUM;
             }
             
             handleChange(updates as Partial<FormField>);
@@ -461,7 +454,7 @@ export const FieldEditorCard: React.FC<FieldEditorCardProps> = ({
                       .filter(f => f.id !== field.id)
                       .map(f => ({ value: f.id, label: f.label }))}
                     value={dep.fieldId}
-                    onChange={(value) => updateDependency(index, { fieldId: value, operator: 'equals', value: '' })}
+                    onChange={(value) => updateDependency(index, { fieldId: value, operator: DEPENDENCY_OPERATORS.EQUALS, value: '' })}
                   />
                   <Select
                     size="small"
@@ -470,7 +463,7 @@ export const FieldEditorCard: React.FC<FieldEditorCardProps> = ({
                     value={dep.operator}
                     onChange={(value) => updateDependency(index, { operator: value as DependencyOperator })}
                   />
-                  {dep.operator !== 'containsAll' && (
+                  {dep.operator !== DEPENDENCY_OPERATORS.CONTAINS_ALL && (
                     <>
                       {dependentField && ('options' in dependentField) ? (
                         <Select
