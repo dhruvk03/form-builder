@@ -121,7 +121,7 @@ export const FillPage: React.FC = () => {
         // Skip validation only for section headers (they have no value)
         if (field.type === FIELD_TYPES.SECTION_HEADER) return;
         
-        const error = validateField(field, values[fieldId]);
+        const error = validateField(field, values[fieldId], requiredFields.has(fieldId));
         if (error) {
           newErrors[fieldId] = error;
         }

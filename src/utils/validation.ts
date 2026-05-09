@@ -2,12 +2,14 @@ import { FIELD_TYPES } from '../constants';
 import type { FormField } from '../types/schema';
 import { FieldRegistry } from '../fields';
 
-export const validateField = (field: FormField, value: any): string | null => {
+export const validateField = (field: FormField, value: any, dynamicRequired?: boolean): string | null => {
   if (field.type === FIELD_TYPES.SECTION_HEADER) return null;
 
   const isEmpty = value === undefined || value === null || value === '' || (Array.isArray(value) && value.length === 0);
 
-  if (field.required && isEmpty) {
+  const isRequired = dynamicRequired !== undefined ? dynamicRequired : field.required;
+
+  if (isRequired && isEmpty) {
     return 'This field is required';
   }
 
