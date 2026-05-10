@@ -4,6 +4,8 @@ This document outlines the key interactions with the AI assistant during the dev
 
 ## 1. Initial Architecture & Code Generation
 
+*Note: This prompt is exceptionally long because it captures all of my upfront planning. It outlines the application features, flow, architecture, and important conventions. This is the first prompt I gave to the AI coding agent to ensure the project started on the right track.*
+
 * **Prompt:**
 
 ```text
@@ -889,4 +891,27 @@ Avoid over-engineering.
 Keep business logic utilities separated from React components wherever practical.
 ```
 
-* **What I verified:** Before accepting the initial scaffolding, I verified that the `schema.ts` accurately reflected all required field types and that the state management approach (lifting state to `BuilderPage`) was sound without introducing unnecessary prop drilling or external libraries.
+* **What I verified:** I verified that the generated architecture strictly adhered to the constraints outlined in the prompt: React Router was used for the specified routes, state was lifted to the `BuilderPage` without Redux/Context, persistence correctly used `localStorage` with prefix-based stable IDs (`tpl_`, `fld_`), and the styling exclusively used CSS Modules to match the requested Google Forms aesthetic. I also ensured no external drag-and-drop or PDF libraries were introduced.
+
+### 2. Eliminating Magic Strings & Enforcing Type Safety
+
+* **Prompt:** "It's better to give a type to `FIELD_TYPE_OPTIONS` and use constants for values. Check all TSX files for missing types and strings/numbers directly passed to a prop. The values like `'singleLineText'` are used as raw strings across multiple files. Put them in a centralized constant object and use that variable everywhere rather than raw string values."
+* **What I verified:** After the AI refactored the files, I verified that `src/constants/index.ts` contained all the necessary UI strings, field types, operators, and actions. I checked `schema.ts` to ensure the TypeScript unions were successfully derived from these constants using `typeof`, ensuring perfect sync between runtime values and compile-time types.
+* **What I rejected/changed:** The AI missed a few raw string literals deep inside the `FormRenderer` mapping logic and the `getOperatorsForField` switch statement. I ran searches to locate the remaining raw strings and specifically instructed the AI to replace those remaining literals to ensure 100% compliance.
+
+### 3. The Plugin Architecture Refactoring
+
+* **Prompt:** "Right now, adding another question type requires edits across several core files, which violates the Open-Closed Principle. Instead, let's create a registry-based plugin system utilizing SOLID principles so that adding a new field type requires minimal changes. Each field type should encapsulate its own schema default, Builder UI component, Filler UI component, and validation rules in a single file. The code should dynamically look up field behaviors from this registry rather than relying on hardcoded switch statements."
+* **What I verified:** Before proceeding, I verified the proposed `FieldPlugin` interface to ensure it covered all necessities (default state, Builder UI, Filler UI, validation, and operators). I verified that replacing the giant `switch` statements with dynamic registry lookups would actually satisfy the Open-Closed Principle (OCP)—meaning adding a new field would now only require creating one new file and registering it in an index, without touching `FormRenderer.tsx` or `FieldEditorCard.tsx`.
+* **What I rejected/changed:** The AI initially offered two options: a Dictionary Map or a full Plugin Registry. I rejected the Dictionary Map because it still required editing multiple central index files, violating the strict zero-edit extensibility goal. I directed the AI to implement the full Plugin Registry.
+
+### 4. Fixing Dynamic Requirement Validation
+
+* **Prompt:** "There is a bug. When a dependency is of 'require' type, then the form is allowed to save even when the required field is empty when filling a response. Fix it and validate the fix using Playwright."
+* **What I verified:** I reviewed the modified `validateField` function to ensure it now accepted a dynamic `dynamicRequired` flag passed down from the form's `useMemo` evaluation, rather than relying solely on the static schema property. I also verified the test flow to ensure submission was successfully blocked.
+
+### 5. High-Fidelity PDF Export Styling
+
+* **Prompt:** "The pdf output should have the same styling as the form. But the download pdf button and top navbar should not be included in the pdf. The print media query is stripping away the form header and question section styling. Ensure print styles preserve the card aesthetic."
+* **What I verified:** I inspected the updated `@media print` CSS rules in `src/index.css` to ensure they correctly used `display: none !important` for the navigation UI and preserved the background colors and accents of the form cards.
+* **What I rejected/changed:** The AI initially tried to achieve the "clean" PDF look by adding `@media print` overrides inside the localized CSS modules (`FillPage.module.css`), which stripped away the padding, borders, and shadows of the cards, ruining the aesthetic. I rejected this localized approach, had the AI undo the commit, and instructed it to centralize the print styling in `src/index.css` to explicitly preserve the card look.
